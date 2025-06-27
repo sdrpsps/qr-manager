@@ -1,0 +1,35 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "qrcode",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2025-03-01",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".open-next/assets"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"d1_databases": [
+    {
+      "binding": "DB",
+      "migrations_dir": "drizzle",
+      "database_name": "qrcode-db",
+      "database_id": "413ffc26-715f-4b07-afba-49ca284e8867"
+    }
+  ],
+	"r2_buckets": [
+		{
+			"binding": "STORE",
+			"bucket_name": "qrcode-store"
+		}
+	]
+}
