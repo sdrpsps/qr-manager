@@ -1,8 +1,11 @@
+import { Options } from "qr-code-styling";
+
 export interface QRCodeData {
   name: string;
+  qrShortUrl: string;
   fileKey: string;
   fileName: string;
-  style: string;
+  styleOptions: Options;
 }
 
 export interface StepProps {
@@ -14,7 +17,7 @@ export interface StepProps {
 
 export interface MaxSizeResponse {
   message: string;
-  data: number
+  data: number;
 }
 
 export interface FileUploadResponse {

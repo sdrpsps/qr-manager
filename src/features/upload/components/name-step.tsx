@@ -1,8 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { StepProps } from "../types";
 import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+
+import { StepProps } from "../types";
 
 type NameStepProps = Omit<StepProps, 'onBack'>;
 

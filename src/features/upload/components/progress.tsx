@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { NameStep } from "./name-step";
-import { UploadStep } from "./upload-step";
-import { StyleStep } from "./style-step";
-import { CompleteStep } from "./complete-step";
+import { randomString } from "@/lib/utils";
+
+import { presetStyles } from "../constants";
 import { QRCodeData, StepProps } from "../types";
+import { CompleteStep } from "./complete-step";
+import { NameStep } from "./name-step";
+import { StyleStep } from "./style-step";
+import { UploadStep } from "./upload-step";
 
 // 步骤类型定义
 type Step = {
@@ -21,9 +25,10 @@ export function QRCodeProgress() {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<QRCodeData>({
     name: "",
+    qrShortUrl: randomString(),
     fileKey: "",
     fileName: "",
-    style: "",
+    styleOptions: presetStyles.classic.options,
   });
 
   const steps: Step[] = [
@@ -42,7 +47,7 @@ export function QRCodeProgress() {
     {
       id: 3,
       title: "样式",
-      description: "选择二维码样式",
+      description: "定制二维码样式",
       component: StyleStep,
     },
     {
