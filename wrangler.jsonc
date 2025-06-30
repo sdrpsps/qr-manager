@@ -28,8 +28,8 @@
   ],
 	"r2_buckets": [
 		{
-			"binding": "STORE",
-			"bucket_name": "qrcode-store"
+			"binding": "R2",
+			"bucket_name": "qrcode-storage"
 		}
 	]
 }

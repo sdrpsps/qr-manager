@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { Navbar } from "@/components/nav-bar";
 import { auth } from "@/lib/auth";
+import { QRCodeProgress } from "@/features/upload/components/progress";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -25,7 +26,8 @@ export default async function DashboardPage() {
                 这里是您的动态二维码管理仪表板。您可以在这里创建、管理和跟踪您的二维码。
               </p>
             </div>
-            
+
+            <QRCodeProgress />
             {/* 这里可以添加更多的 dashboard 内容，比如：
             - 二维码统计
             - 最近创建的二维码
