@@ -14,11 +14,27 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col items-center flex-grow">
+    <>
       <Navbar user={session.user} />
-      <main className="w-full max-w-4xl px-4 space-y-8 py-8">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid gap-6">
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold mb-4">欢迎使用 QRManager</h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                这里是您的动态二维码管理仪表板。您可以在这里创建、管理和跟踪您的二维码。
+              </p>
+            </div>
+            
+            {/* 这里可以添加更多的 dashboard 内容，比如：
+            - 二维码统计
+            - 最近创建的二维码
+            - 快速操作按钮
+            - 等等
+            */}
+          </div>
+        </div>
       </main>
-    </div>
+    </>
   );
 }

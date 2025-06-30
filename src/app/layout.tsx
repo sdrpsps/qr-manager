@@ -15,17 +15,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "动态二维码生成工具 - 轻松管理您的二维码",
+  title: "QRManager - 简单易用的动态二维码",
   description:
     "专业的动态二维码生成与管理平台，支持二维码生成、实时更新管理。助力企业高效开展营销活动与用户互动。",
-  keywords: "动态二维码,二维码生成器,活码生成,二维码管理,营销工具",
+  keywords: "动态二维码,二维码生成器,活码生成,二维码管理,营销工具,QRManager",
   robots: "index, follow",
   openGraph: {
-    title: "动态二维码生成工具 - 轻松管理您的二维码",
+    title: "QRManager - 简单易用的动态二维码",
     description: "专业的动态二维码生成与管理平台，支持二维码生成、实时更新管理",
     type: "website",
     locale: "zh_CN",
-    images: ["https://y.gtimg.cn/music/photo_new/T053M000004Amlfr4OcARI.jpg"],
+    images: ["https://image.dooo.ng/c/2025/06/30/6861f48915974.webp"],
   },
 };
 

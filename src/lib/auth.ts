@@ -23,7 +23,7 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
-        subject: "修改密码 - 动态二维码",
+        subject: "修改密码 - QRManager",
         name: user.name,
         url,
       });
@@ -35,7 +35,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
-        subject: "验证您的邮箱地址 - 动态二维码",
+        subject: "验证您的邮箱地址 - QRManager",
         name: user.name,
         url,
       });

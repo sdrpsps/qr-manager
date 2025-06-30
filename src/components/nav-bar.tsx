@@ -1,7 +1,6 @@
-import { User } from "better-auth";
+import { User } from "better-auth/types";
+import Image from "next/image";
 import Link from "next/link";
-
-import { LogoutButton } from "@/features/auth/components/logout-button";
 
 import { UserMenu } from "./user-menu";
 
@@ -9,15 +8,23 @@ interface NavbarProps {
   user: User;
 }
 
-export const Navbar = async ({ user }: NavbarProps) => {
+export const Navbar = ({ user }: NavbarProps) => {
   return (
-    <nav className="flex justify-between items-center p-4 border-b bg-background w-full">
-      <div className="text-2xl font-bold text-blue-500 dark:text-blue-200 select-none">
-        <Link href="/">动态二维码生成工具</Link>
-      </div>
-      <div className="flex items-center gap-4">
+    <nav className="w-full border-b bg-background">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent select-none">
+          <Link href="/" className="flex items-center">
+            <Image
+              className="mr-2"
+              src="https://image.dooo.ng/c/2025/06/30/6861f48915974.webp"
+              alt="QRManager"
+              width={30}
+              height={30}
+            />
+            QRManager
+          </Link>
+        </div>
         <UserMenu user={user} />
-        <LogoutButton />
       </div>
     </nav>
   );

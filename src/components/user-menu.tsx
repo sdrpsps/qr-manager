@@ -1,8 +1,7 @@
 "use client";
 
-import { User as BetterAuthUser } from "better-auth";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { User as BetterAuthUser } from "better-auth/types";
+import { ChevronDownIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth-client";
+import { LogoutButton } from "@/features/auth/components/logout-button";
 
 import { UserAvatar } from "./user-avatar";
 
@@ -23,18 +22,7 @@ interface UserMenuProps {
 }
 
 export const UserMenu = ({ user }: UserMenuProps) => {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleSignOut = () => {
-    authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/sign-in");
-        },
-      },
-    });
-  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -51,8 +39,8 @@ export const UserMenu = ({ user }: UserMenuProps) => {
               </div>
               <div className="text-xs text-gray-500">{user.email}</div>
             </div>
-            <ChevronDown
-              className={`h-4 w-4 text-gray-500 transition-transform ${
+            <ChevronDownIcon
+              className={`size-4 text-gray-500 transition-transform ${
                 isOpen ? "rotate-180" : ""
               }`}
             />
@@ -73,23 +61,19 @@ export const UserMenu = ({ user }: UserMenuProps) => {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={() => {}}>
-          <User className="mr-2 h-4 w-4" />
+          <UserIcon className="size-4 mr-2" />
           <span>个人资料</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => {}}>
-          <Settings className="mr-2 h-4 w-4" />
+          <SettingsIcon className="size-4 mr-2" />
           <span>设置</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className="text-red-600 focus:text-red-600"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>退出登录</span>
+        <DropdownMenuItem asChild>
+          <LogoutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

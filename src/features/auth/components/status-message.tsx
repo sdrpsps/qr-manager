@@ -1,4 +1,4 @@
-import { CheckCircleIcon, Loader2, TriangleAlertIcon } from "lucide-react";
+import { CheckCircleIcon, Loader2Icon, TriangleAlertIcon } from "lucide-react";
 
 export type StatusType = 'idle' | 'loading' | 'success' | 'error';
 
@@ -24,7 +24,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({ type, message }) =
   if (type === 'loading') {
     return (
       <div className="flex items-center gap-3 rounded-md bg-blue-100 p-3 text-sm text-blue-700">
-        <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+        <Loader2Icon className="size-4 animate-spin shrink-0" />
         请稍后...
       </div>
     );
@@ -35,7 +35,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({ type, message }) =
 
   return (
     <div className={`flex items-center gap-3 rounded-md p-3 text-sm ${config.className}`}>
-      <Icon className="h-4 w-4 shrink-0" />
+      <Icon className="size-4 shrink-0" />
       {message}
     </div>
   );
