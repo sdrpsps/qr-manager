@@ -12,7 +12,7 @@ import {
   Text,
 } from "@react-email/components";
 
-interface SignInTemplateProps {
+interface ResetPasswordTemplateProps {
   name: string;
   verificationUrl: string;
 }
@@ -20,11 +20,11 @@ interface SignInTemplateProps {
 const SignInTemplate = ({
   name,
   verificationUrl,
-}: SignInTemplateProps) => (
+}: ResetPasswordTemplateProps) => (
   <Tailwind>
     <Html>
       <Head />
-      <Preview>验证您的邮箱 - QRManager</Preview>
+      <Preview>重置您的密码 - QRManager</Preview>
       <Body className="bg-gray-100 font-sans text-gray-700">
         <Container className="max-w-lg mx-auto bg-white rounded-xl shadow-lg overflow-hidden my-6">
           {/* Header with Logo */}
@@ -44,7 +44,7 @@ const SignInTemplate = ({
               您好，<strong>{name}</strong>！
             </Text>
             <Text className="mb-4 leading-relaxed">
-              感谢您注册 <strong>QRManager</strong>。为了确保您的账户安全，请点击下面按钮验证您的邮箱。
+              为了确保您的账户安全，请点击下面按钮重置您的密码。
             </Text>
 
             <Section className="text-center my-6">
@@ -52,7 +52,7 @@ const SignInTemplate = ({
                 href={verificationUrl}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-full transition-all"
               >
-                验证邮箱地址
+                重置密码
               </Button>
             </Section>
 

@@ -2,7 +2,7 @@ import { User } from "better-auth/types";
 import Image from "next/image";
 import Link from "next/link";
 
-import { UserMenu } from "./user-menu";
+import { UserMenu } from "@/features/user/components/user-menu";
 
 interface NavbarProps {
   user: User;

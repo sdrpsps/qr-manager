@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2Icon, LogOutIcon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -13,14 +13,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { useLogoutState } from "../hooks/useLogoutState";
 
-export const LogoutButton = () => {
+export const LogoutAlertDialog = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useLogoutState();
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -40,16 +40,7 @@ export const LogoutButton = () => {
   };
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-red-600 hover:text-red-600"
-        >
-          <LogOutIcon className="size-4 mr-2" />
-          退出登录
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>退出登录</AlertDialogTitle>

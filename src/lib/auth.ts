@@ -1,8 +1,12 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
+import {
+  sendResetPasswordEmail,
+  sendSignInEmail,
+} from "@/features/auth/actions/sendEmail";
+
 import { createDb } from "./db";
-import { sendEmail } from "@/features/auth/actions/sendEmail";
 import { accounts, sessions, users, verifications } from "./db/schema";
 
 const db = await createDb();
@@ -17,11 +21,16 @@ export const auth = betterAuth({
       verification: verifications,
     },
   }),
+  account: {
+    accountLinking: {
+      enabled: true,
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-      await sendEmail({
+      await sendResetPasswordEmail({
         to: user.email,
         subject: "修改密码 - QRManager",
         name: user.name,
@@ -33,12 +42,18 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await sendEmail({
+      await sendSignInEmail({
         to: user.email,
         subject: "验证您的邮箱地址 - QRManager",
         name: user.name,
         url,
       });
+    },
+  },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
   security: {

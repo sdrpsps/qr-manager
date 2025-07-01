@@ -1,7 +1,7 @@
 "use client";
 
 import { User as BetterAuthUser } from "better-auth/types";
-import { ChevronDownIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { ChevronDownIcon, LockIcon, LogOutIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,9 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogoutButton } from "@/features/auth/components/logout-button";
 
+import { useProfileStates } from "../hooks/useProfileStates";
 import { UserAvatar } from "./user-avatar";
+import { useRestPasswordStates } from "../../auth/hooks/useRestPasswordStates";
+import { useLogoutState } from "@/features/auth/hooks/useLogoutState";
 
 interface UserMenuProps {
   user: BetterAuthUser;
@@ -23,6 +25,9 @@ interface UserMenuProps {
 
 export const UserMenu = ({ user }: UserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [, setProfileState] = useProfileStates();
+  const [, setResetPasswordState] = useRestPasswordStates();
+  const [, setLogoutOpen] = useLogoutState();
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -60,20 +65,25 @@ export const UserMenu = ({ user }: UserMenuProps) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => {}}>
-          <UserIcon className="size-4 mr-2" />
+        <DropdownMenuItem
+          onClick={() => setProfileState({ profileOpen: true })}
+        >
+          <UserIcon className="size-4" />
           <span>个人资料</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => {}}>
-          <SettingsIcon className="size-4 mr-2" />
-          <span>设置</span>
+        <DropdownMenuItem
+          onClick={() => setResetPasswordState({ resetPasswordOpen: true })}
+        >
+          <LockIcon className="size-4" />
+          修改密码
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
-          <LogoutButton />
+        <DropdownMenuItem onClick={() => setLogoutOpen(true)}>
+          <LogOutIcon className="size-4" />
+          退出登录
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { GithubIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -16,12 +17,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-
 import {
   StatusMessage,
   StatusType,
 } from "@/features/auth/components/status-message";
+import { authClient } from "@/lib/auth-client";
+
 import { registerFormSchema } from "../schema";
 
 type FormStatus = {
@@ -41,6 +42,13 @@ export const RegisterForm = () => {
       confirmPassword: "",
     },
   });
+
+  const handleGithub = async () => {
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/dashboard",
+    });
+  };
 
   const onSubmit = async (values: z.infer<typeof registerFormSchema>) => {
     await authClient.signUp.email(
@@ -128,9 +136,33 @@ export const RegisterForm = () => {
 
         <StatusMessage type={formStatus.type} message={formStatus.message} />
 
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              或者
+            </span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="w-full"
+          onClick={handleGithub}
+        >
+          <GithubIcon className="size-4" />
+          Github 注册
+        </Button>
+
         <div className="flex justify-between">
           <Link href="/sign-in">
-            <Button type="button" variant="ghost">有账号？去登录</Button>
+            <Button type="button" variant="ghost">
+              有账号？去登录
+            </Button>
           </Link>
           <Button type="submit" disabled={formStatus.type === "loading"}>
             注册
