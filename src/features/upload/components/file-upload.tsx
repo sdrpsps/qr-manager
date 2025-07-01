@@ -49,7 +49,7 @@ export function FileUpload({
     formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload", {
+      const response = await fetch("/api/upload/attachments", {
         method: "POST",
         body: formData,
       });

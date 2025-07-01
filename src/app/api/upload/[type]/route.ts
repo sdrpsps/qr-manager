@@ -1,12 +1,17 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
 import { FileUploadResponse } from "@/features/upload/types";
+import { auth } from "@/lib/auth";
 
 const MAX_FILE_SIZE = Number(process.env.MAX_FILE_MB) * 1024 * 1024;
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ type: "attachments" | "qrcodes" }> }
+) {
+  const { type: uploadType } = await params;
+
   const session = await auth.api.getSession({
     headers: request.headers,
   });
@@ -52,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     const storage = env.R2;
-    const key = `attachments/${session.user.id}/${Date.now()}-${file.name}`;
+    const key = `${uploadType}/${session.user.id}/${Date.now()}-${file.name}`;
 
     await storage.put(key, file, {
       httpMetadata: {

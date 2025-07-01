@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
-import { MaxSizeResponse } from "@/features/upload/types";
+import { MaxSizeResponse } from "@/features/qrcode/types";
 
 export async function GET(request: NextRequest) {
   const session = await auth.api.getSession({

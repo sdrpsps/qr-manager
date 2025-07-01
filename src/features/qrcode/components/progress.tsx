@@ -26,6 +26,7 @@ export function QRCodeProgress() {
   const [data, setData] = useState<QRCodeData>({
     name: "",
     qrShortUrl: randomString(),
+    qrFile: null,
     fileKey: "",
     fileName: "",
     styleOptions: presetStyles.classic.options,

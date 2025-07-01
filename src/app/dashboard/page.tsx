@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { Navbar } from "@/components/nav-bar";
 import { auth } from "@/lib/auth";
-import { QRCodeProgress } from "@/features/upload/components/progress";
+import { QRCodeProgress } from "@/features/qrcode/components/progress";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({

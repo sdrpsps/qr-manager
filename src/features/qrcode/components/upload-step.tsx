@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/features/upload/components/file-upload";
+import { MaxSizeResponse } from "@/features/upload/types";
 
-import { FileUpload } from "./file-upload";
-import { MaxSizeResponse, StepProps } from "../types";
+import { StepProps } from "../types";
 
 export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
   const [maxSizeMB, setMaxSizeMB] = useState<number>(0);

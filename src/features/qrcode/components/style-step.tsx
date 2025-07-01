@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import {
   DownloadIcon,
   EyeIcon,
+  ImageIcon,
   MaximizeIcon,
   PaletteIcon,
   RotateCcwIcon,
@@ -34,6 +36,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
     data: `${window.location.origin}/s/${data.qrShortUrl}`,
   });
   const qrStylingRef = useRef<QRStylingHandle | null>(null);
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
 
   // 切换预设样式
   const handlePresetChange = (presetName: string) => {
@@ -43,6 +46,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
     setOptions((prev) => ({
       ...preset.options,
       data: prev.data,
+      image: prev.image,
     }));
   };
 
@@ -174,15 +178,6 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
     }));
   };
 
-  // 更新二维码尺寸
-  const handleSizeChange = (size: number) => {
-    setOptions((prev) => ({
-      ...prev,
-      width: size,
-      height: size,
-    }));
-  };
-
   // 更新容错级别
   const handleErrorCorrectionLevelChange = (level: "L" | "M" | "Q" | "H") => {
     setOptions((prev) => ({
@@ -275,7 +270,15 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
   // 下载二维码
   const handleDownload = () => {
     if (qrStylingRef.current) {
-      qrStylingRef.current.download({ name: data.name });
+      qrStylingRef.current.download({ name: data.name, extension: "png" });
+    }
+  };
+
+  // 导出二维码
+  const handleExport = async () => {
+    if (qrStylingRef.current) {
+      const res = await qrStylingRef.current.export("png");
+      return res as Blob;
     }
   };
 
@@ -296,6 +299,23 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
   // 移除Logo
   const handleRemoveLogo = () => {
     setOptions((prev) => ({ ...prev, image: undefined }));
+    if (logoInputRef.current) {
+      logoInputRef.current.value = "";
+    }
+  };
+
+  // 下一步
+  const handleNext = async () => {
+    const blob = await handleExport();
+
+    setData({
+      ...data,
+      styleOptions: options,
+      qrFile: blob
+        ? new File([blob], `${data.name}.png`, { type: "image/png" })
+        : null,
+    });
+    onNext();
   };
 
   return (
@@ -309,9 +329,10 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
         {/* 样式设置面板 */}
         <div className="space-y-6">
           <Tabs defaultValue="presets" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="presets">预设样式</TabsTrigger>
               <TabsTrigger value="colors">颜色设置</TabsTrigger>
+              <TabsTrigger value="logo">Logo设置</TabsTrigger>
               <TabsTrigger value="advanced">高级设置</TabsTrigger>
             </TabsList>
 
@@ -554,14 +575,23 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
                     </div>
                   )}
                 </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="logo" className="space-y-4">
+              <div className="space-y-4">
+                <h4 className="font-medium flex items-center gap-2">
+                  <ImageIcon className="size-4" />
+                  Logo设置
+                </h4>
 
                 {/* Logo设置 */}
                 <div className="space-y-4">
-                  <h4 className="font-medium">Logo设置</h4>
                   <div>
-                    <Label htmlFor="logo-upload">Logo（可选）</Label>
+                    <Label htmlFor="logo-upload">Logo</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Input
+                        ref={logoInputRef}
                         id="logo-upload"
                         type="file"
                         accept="image/*"
@@ -587,6 +617,61 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
                       )}
                     </div>
                   </div>
+                  {options.image && (
+                    <>
+                      <div>
+                        <Label
+                          htmlFor="logo-margin"
+                          className="flex items-center gap-2"
+                        >
+                          Logo边距: {options.imageOptions?.margin || 0}px
+                        </Label>
+                        <Input
+                          id="logo-margin"
+                          type="range"
+                          min="0"
+                          max="20"
+                          step="1"
+                          value={options.imageOptions?.margin || 0}
+                          onChange={(e) =>
+                            handleLogoMarginChange(Number(e.target.value))
+                          }
+                          className="mt-1"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>0px</span>
+                          <span>10px</span>
+                          <span>20px</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label>隐藏Logo背景点</Label>
+                          <p className="text-xs text-gray-500">
+                            在Logo区域隐藏二维码点，使Logo更清晰
+                          </p>
+                        </div>
+                        <Button
+                          variant={
+                            options.imageOptions?.hideBackgroundDots
+                              ? "default"
+                              : "outline"
+                          }
+                          size="sm"
+                          onClick={() =>
+                            handleHideBackgroundDotsToggle(
+                              !options.imageOptions?.hideBackgroundDots
+                            )
+                          }
+                        >
+                          {options.imageOptions?.hideBackgroundDots
+                            ? "已启用"
+                            : "已禁用"}
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </TabsContent>
@@ -673,39 +758,6 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
                   </div>
                 </div>
 
-                {/* 尺寸设置 */}
-                <div className="space-y-4">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <MaximizeIcon className="size-4" />
-                    尺寸设置
-                  </h4>
-
-                  <div>
-                    <Label
-                      htmlFor="qr-size"
-                      className="flex items-center gap-2"
-                    >
-                      二维码尺寸: {options.width}px
-                    </Label>
-                    <Input
-                      id="qr-size"
-                      type="range"
-                      min="200"
-                      max="500"
-                      step="50"
-                      value={options.width}
-                      onChange={(e) => handleSizeChange(Number(e.target.value))}
-                      className="mt-1"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>200px</span>
-                      <span>300px</span>
-                      <span>400px</span>
-                      <span>500px</span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* 边距和圆角设置 */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
@@ -741,12 +793,15 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label
-                      htmlFor="background-round"
-                      className="flex items-center gap-2"
-                    >
-                      背景圆角
-                    </Label>
+                    <div>
+                      <Label
+                        htmlFor="background-round"
+                        className="flex items-center gap-2"
+                      >
+                        背景圆角
+                      </Label>
+                      <p className="text-xs text-gray-500">暗色背景时才明显</p>
+                    </div>
                     <Button
                       variant={
                         options.backgroundOptions?.round ? "default" : "outline"
@@ -758,7 +813,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
                         )
                       }
                     >
-                      {options.backgroundOptions?.round ? "启用" : "禁用"}
+                      {options.backgroundOptions?.round ? "已启用" : "已禁用"}
                     </Button>
                   </div>
                 </div>
@@ -803,63 +858,6 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
                 </div>
 
                 {/* Logo高级设置 */}
-                {options.image && (
-                  <div className="space-y-4">
-                    <h4 className="font-medium">Logo高级设置</h4>
-
-                    <div>
-                      <Label
-                        htmlFor="logo-margin"
-                        className="flex items-center gap-2"
-                      >
-                        Logo边距: {options.imageOptions?.margin || 0}px
-                      </Label>
-                      <Input
-                        id="logo-margin"
-                        type="range"
-                        min="0"
-                        max="20"
-                        step="1"
-                        value={options.imageOptions?.margin || 0}
-                        onChange={(e) =>
-                          handleLogoMarginChange(Number(e.target.value))
-                        }
-                        className="mt-1"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>0px</span>
-                        <span>10px</span>
-                        <span>20px</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>隐藏Logo背景点</Label>
-                        <p className="text-xs text-gray-500">
-                          在Logo区域隐藏二维码点，使Logo更清晰
-                        </p>
-                      </div>
-                      <Button
-                        variant={
-                          options.imageOptions?.hideBackgroundDots
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        onClick={() =>
-                          handleHideBackgroundDotsToggle(
-                            !options.imageOptions?.hideBackgroundDots
-                          )
-                        }
-                      >
-                        {options.imageOptions?.hideBackgroundDots
-                          ? "已启用"
-                          : "已禁用"}
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -882,8 +880,12 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
               下载
             </Button>
           </div>
-          <div className="border rounded-lg p-6 bg-gray-50 flex items-center justify-center min-h-[200px] max-w-[500px]">
-            <QRStyling ref={qrStylingRef} options={options} />
+          <div className="border rounded-lg p-6 bg-gray-50 flex items-center justify-center">
+            <QRStyling
+              ref={qrStylingRef}
+              options={options}
+              className="[&>canvas]:w-[300px] [&>canvas]:h-[300px]"
+            />
           </div>
         </div>
       </div>
@@ -892,13 +894,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
         <Button variant="outline" onClick={onBack} className="flex-1">
           上一步
         </Button>
-        <Button
-          onClick={() => {
-            setData({ ...data, styleOptions: options });
-            onNext();
-          }}
-          className="flex-1"
-        >
+        <Button onClick={handleNext} className="flex-1">
           下一步
         </Button>
       </div>
