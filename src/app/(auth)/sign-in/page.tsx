@@ -1,6 +1,6 @@
 import { LoginForm } from "@/features/auth/components/login-form";
 
-export default function SignIn() {
+export default function SignInPage() {
   return (
     <div className="flex w-full flex-col justify-center space-y-6">
       <div className="flex flex-col space-y-2 text-center">

@@ -1,6 +1,6 @@
 import { RegisterForm } from "@/features/auth/components/register-form";
 
-export default function SignUp() {
+export default function SignUpPage() {
   return (
     <div className="flex w-full flex-col justify-center space-y-6">
       <div className="flex flex-col space-y-2 text-center">

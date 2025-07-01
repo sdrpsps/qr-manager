@@ -101,6 +101,24 @@ export const LoginForm = () => {
           )}
         />
 
+        <StatusMessage type={formStatus.type} message={formStatus.message} />
+
+        <div className="flex justify-between">
+          <Link href="/sign-up">
+            <Button type="button" variant="ghost">
+              没有账号？去注册
+            </Button>
+          </Link>
+          <Link href="/forgot-password">
+            <Button type="button" variant="ghost">
+              忘记密码？
+            </Button>
+          </Link>
+        </div>
+        <Button type="submit" className="w-full">
+          登录
+        </Button>
+
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
@@ -122,17 +140,6 @@ export const LoginForm = () => {
           <GithubIcon className="size-4" />
           Github 登录
         </Button>
-
-        <StatusMessage type={formStatus.type} message={formStatus.message} />
-
-        <div className="flex justify-between">
-          <Link href="/sign-up">
-            <Button type="button" variant="ghost">
-              没有账号？去注册
-            </Button>
-          </Link>
-          <Button type="submit">登录</Button>
-        </div>
       </form>
     </Form>
   );

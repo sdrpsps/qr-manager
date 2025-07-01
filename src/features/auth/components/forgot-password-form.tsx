@@ -23,23 +23,19 @@ import {
 } from "@/features/auth/components/status-message";
 import { authClient } from "@/lib/auth-client";
 
-import { registerFormSchema } from "../schema";
-
+import { forgotPasswordFormSchema } from "../schema";
 type FormStatus = {
   type: StatusType;
   message?: string;
 };
 
-export const RegisterForm = () => {
+export const ForgotPasswordForm = () => {
   const [formStatus, setFormStatus] = useState<FormStatus>({ type: "idle" });
 
-  const form = useForm<z.infer<typeof registerFormSchema>>({
-    resolver: zodResolver(registerFormSchema),
+  const form = useForm<z.infer<typeof forgotPasswordFormSchema>>({
+    resolver: zodResolver(forgotPasswordFormSchema),
     defaultValues: {
-      name: "",
       email: "",
-      password: "",
-      confirmPassword: "",
     },
   });
 
@@ -50,13 +46,11 @@ export const RegisterForm = () => {
     });
   };
 
-  const onSubmit = async (values: z.infer<typeof registerFormSchema>) => {
-    await authClient.signUp.email(
+  const onSubmit = async (values: z.infer<typeof forgotPasswordFormSchema>) => {
+    await authClient.requestPasswordReset(
       {
         email: values.email,
-        password: values.password,
-        name: values.name,
-        callbackURL: "/dashboard",
+        redirectTo: "/reset-password",
       },
       {
         onRequest: () => {
@@ -65,7 +59,7 @@ export const RegisterForm = () => {
         onSuccess: () => {
           setFormStatus({
             type: "success",
-            message: "请检查你的邮箱，点击链接完成注册",
+            message: "密码重置邮件已发送，请检查您的邮箱。",
           });
         },
         onError: (ctx) => {
@@ -83,51 +77,12 @@ export const RegisterForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>昵称</FormLabel>
-              <FormControl>
-                <Input placeholder="昵称" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>邮箱</FormLabel>
               <FormControl>
-                <Input placeholder="邮箱" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>密码</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="密码" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>确认密码</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="确认密码" {...field} />
+                <Input type="email" placeholder="邮箱" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -142,18 +97,14 @@ export const RegisterForm = () => {
               有账号？去登录
             </Button>
           </Link>
-          <Link href="/forgot-password">
-            <Button type="button" variant="ghost">
-              忘记密码？
-            </Button>
-          </Link>
         </div>
+
         <Button
           className="w-full"
           type="submit"
           disabled={formStatus.type === "loading"}
         >
-          注册
+          发送重置密码邮件
         </Button>
 
         <div className="relative">
@@ -175,7 +126,7 @@ export const RegisterForm = () => {
           onClick={handleGithub}
         >
           <GithubIcon className="size-4" />
-          Github 注册
+          Github 登录
         </Button>
       </form>
     </Form>

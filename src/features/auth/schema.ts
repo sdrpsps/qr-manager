@@ -42,3 +42,9 @@ export const resetPasswordFormSchema = z
     message: "密码不一致",
     path: ["confirmPassword"],
   });
+
+export const forgotPasswordFormSchema = z.object({
+  email: z.string().email({
+    message: "邮箱格式不正确",
+  }),
+});
