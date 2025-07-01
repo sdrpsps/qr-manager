@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowLeftIcon } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { randomString } from "@/lib/utils";
 
@@ -11,6 +13,7 @@ import { CompleteStep } from "./complete-step";
 import { NameStep } from "./name-step";
 import { StyleStep } from "./style-step";
 import { UploadStep } from "./upload-step";
+import Link from "next/link";
 
 // 步骤类型定义
 type Step = {
@@ -54,7 +57,7 @@ export function QRCodeProgress() {
     {
       id: 4,
       title: "完成",
-      description: "生成二维码",
+      description: "上传二维码",
       component: CompleteStep,
     },
   ];
@@ -93,8 +96,20 @@ export function QRCodeProgress() {
     <div className="w-full mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle className="text-center">
-            生成二维码 {data.name ? `- ${data.name}` : ""}
+          <CardTitle className="relative mb-4">
+            <Button
+              className="absolute top-0 left-0"
+              variant="outline"
+              size="icon"
+              asChild
+            >
+              <Link href="/dashboard">
+                <ArrowLeftIcon className="size-4" />
+              </Link>
+            </Button>
+            <h2 className="text-2xl font-bold text-center">
+              创建二维码 {data.name ? `- ${data.name}` : ""}
+            </h2>
           </CardTitle>
 
           {/* 进度条和步骤指示器 */}
