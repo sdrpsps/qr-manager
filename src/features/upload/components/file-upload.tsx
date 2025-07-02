@@ -9,7 +9,7 @@ import { FileUploadResponse } from "../types";
 interface FileUploadProps {
   defaultFileName: string;
   maxSizeMB: number;
-  onFileUploadSuccess?: (fileKey: string, fileName: string) => void;
+  onFileUploadSuccess?: (qrImageKey: string, fileName: string) => void;
 }
 
 export function FileUpload({

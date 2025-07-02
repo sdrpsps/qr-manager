@@ -6,12 +6,7 @@ import { createStorage } from "@/lib/storage";
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ qrCodeId: string }> }
-) {
-  const { qrCodeId } = await params;
-
+export async function POST(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: request.headers,
   });
@@ -23,6 +18,7 @@ export async function POST(
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
+    const qrId = formData.get("qrId") as string;
 
     if (!file) {
       return NextResponse.json(
@@ -48,12 +44,12 @@ export async function POST(
     }
 
     const storage = await createStorage();
-    const key = `qrcodes/${session.user.id}/${qrCodeId}`;
+    const key = `qrcodes/${session.user.id}/${qrId}`;
 
     await storage.put(key, file, {
       httpMetadata: {
         contentType: file.type,
-        contentDisposition: `inline; filename="${qrCodeId}"`,
+        contentDisposition: `inline; filename="${qrId}"`,
       },
     });
 

@@ -1,14 +1,15 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { FileUploadResponse } from "@/features/upload/types";
 
-import { StepProps } from "../types";
 import { CheckCircleIcon, Loader2Icon } from "lucide-react";
+import { StepProps } from "../types";
 
 type CompleteStepProps = Omit<StepProps, "onNext" | "setData">;
 
@@ -19,22 +20,35 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("qrId", data.qrId);
 
     try {
-      const response = await fetch("/api/upload/qrcode", {
+      const uploadResponse = await fetch("/api/upload/qrcode", {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorData = (await response.json()) as { message?: string };
+      if (!uploadResponse.ok) {
+        const errorData = (await uploadResponse.json()) as { message?: string };
         throw new Error(
-          errorData.message || `Upload failed with status ${response.status}`
+          errorData.message ||
+            `Upload failed with status ${uploadResponse.status}`
         );
       }
 
-      const data = (await response.json()) as FileUploadResponse;
-      setQrFileKey(data.data.key);
+      const uploadData = (await uploadResponse.json()) as FileUploadResponse;
+      setQrFileKey(uploadData.data.key);
+
+      const updateResponse = await fetch("/api/qrcode/update/image", {
+        method: "POST",
+        body: JSON.stringify({ qrImageKey: uploadData.data.key, qrId: data.qrId }),
+      });
+
+      if (!updateResponse.ok) {
+        toast.error("更新二维码失败");
+        return;
+      }
+
       toast.success("二维码上传成功！");
     } catch (error) {
       console.error("Upload error:", error);
@@ -97,8 +111,8 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
           上一步
         </Button>
 
-        <Button className="flex-1" disabled={uploading}>
-          完成
+        <Button className="flex-1" disabled={uploading} asChild>
+          <Link href="/dashboard">完成</Link>
         </Button>
       </div>
     </div>

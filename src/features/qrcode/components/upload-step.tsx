@@ -1,6 +1,8 @@
 "use client";
 
+import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/features/upload/components/file-upload";
@@ -10,6 +12,7 @@ import { StepProps } from "../types";
 
 export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
   const [maxSizeMB, setMaxSizeMB] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
   const getMaxSizeMB = async () => {
     const response = await fetch("/api/upload/max");
@@ -17,8 +20,29 @@ export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
     setMaxSizeMB(data.data);
   };
 
-  const handleFileUpload = (fileKey: string, fileName: string) => {
-    setData({ ...data, fileKey, fileName });
+  const handleFileUpload = (qrImageKey: string, fileName: string) => {
+    setData({ ...data, qrImageKey, fileName });
+  };
+
+  const handleNext = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/qrcode/update/attachment", {
+        method: "POST",
+        body: JSON.stringify({ qrId: data.qrId, attachmentKey: data.qrImageKey }),
+      });
+
+      if (!res.ok) {
+        toast.error("更新二维码失败");
+        return;
+      }
+
+      onNext();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -39,8 +63,12 @@ export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
         <Button variant="outline" onClick={onBack} className="flex-1">
           上一步
         </Button>
-        <Button onClick={onNext} disabled={!data.fileKey} className="flex-1">
-          下一步
+        <Button
+          onClick={handleNext}
+          disabled={!data.qrImageKey || loading}
+          className="flex-1"
+        >
+          {loading ? <Loader2Icon className="size-4 animate-spin" /> : "下一步"}
         </Button>
       </div>
     </div>

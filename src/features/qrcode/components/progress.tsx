@@ -29,7 +29,7 @@ export function QRCodeProgress() {
     name: "",
     qrId: "",
     qrFile: null,
-    fileKey: "",
+    qrImageKey: "",
     fileName: "",
     styleOptions: presetStyles.classic.options,
   });

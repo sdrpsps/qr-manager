@@ -1,3 +1,4 @@
+import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
@@ -13,24 +14,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { name } = (await request.json()) as { name: string };
+  const { qrId, qrImageKey } = (await request.json()) as {
+    qrId: string;
+    qrImageKey: string;
+  };
 
   const db = await createDb();
 
   const result = await db
-    .insert(qrcodes)
-    .values({
-      name,
-      userId: session.user.id,
-    })
+    .update(qrcodes)
+    .set({ qrImageKey, isActive: true })
+    .where(and(eq(qrcodes.id, qrId), eq(qrcodes.userId, session.user.id)))
     .returning();
 
   if (!result[0]) {
-    return NextResponse.json({ message: "Failed to create QR code" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Failed to update QR code" },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({
-    message: "QR code created successfully",
+    message: "QR code updated successfully",
     data: result[0],
   });
 }

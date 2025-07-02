@@ -4,7 +4,7 @@ export interface QRCodeData {
   name: string;
   qrId: string;
   qrFile: File | null;
-  fileKey: string;
+  qrImageKey: string;
   fileName: string;
   styleOptions: Options;
 }

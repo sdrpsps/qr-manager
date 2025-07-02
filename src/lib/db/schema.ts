@@ -1,5 +1,7 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
+import { randomString } from "../utils";
 
 // ——— 用户表 ———
 export const users = sqliteTable("user", {
@@ -89,13 +91,13 @@ export const userRelations = relations(users, ({ many }) => ({
 
 // ——— 二维码表 ———
 export const qrcodes = sqliteTable("qrcode", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().$defaultFn(() => randomString()),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   attachmentKey: text("attachmentKey"),
-  fileKey: text("fileKey"),
+  qrImageKey: text("qrImageKey"),
   styleOptions: text("styleOptions"),
   isActive: integer("isActive", { mode: "boolean" }).notNull().default(false),
   isDeleted: integer("isDeleted", { mode: "boolean" }).notNull().default(false),
@@ -107,3 +109,5 @@ export const qrcodes = sqliteTable("qrcode", {
     .default(sql`(CURRENT_TIMESTAMP)`),
   deletedAt: integer("deletedAt", { mode: "timestamp" }),
 });
+
+export type QRCode = typeof qrcodes.$inferSelect;

@@ -5,6 +5,7 @@ import {
   DownloadIcon,
   EyeIcon,
   ImageIcon,
+  Loader2Icon,
   MaximizeIcon,
   PaletteIcon,
   RotateCcwIcon,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import type { Options } from "qr-code-styling";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +33,7 @@ import { StepProps } from "../types";
 import { QRStyling, QRStylingHandle } from "./qr-styling-wrapper";
 
 export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
+  const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<Options>({
     ...data.styleOptions,
     data: `${window.location.origin}/s/${data.qrId}`,
@@ -306,6 +309,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
 
   // 下一步
   const handleNext = async () => {
+    setLoading(true);
     const blob = await handleExport();
 
     setData({
@@ -315,7 +319,27 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
         ? new File([blob], `${data.name}.png`, { type: "image/png" })
         : null,
     });
-    onNext();
+
+    try {
+      const res = await fetch("/api/qrcode/update/style", {
+        method: "POST",
+        body: JSON.stringify({
+          qrId: data.qrId,
+          styleOptions: JSON.stringify(options),
+        }),
+      });
+
+      if (!res.ok) {
+        toast.error("更新二维码失败");
+        return;
+      }
+
+      onNext();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -874,7 +898,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
               variant="outline"
               size="sm"
               onClick={handleDownload}
-              disabled={!data.fileKey}
+              disabled={!data.qrImageKey}
             >
               <DownloadIcon className="size-4 mr-2" />
               下载
@@ -895,7 +919,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
           上一步
         </Button>
         <Button onClick={handleNext} className="flex-1">
-          下一步
+          {loading ? <Loader2Icon className="size-4 animate-spin" /> : "下一步"}
         </Button>
       </div>
     </div>
