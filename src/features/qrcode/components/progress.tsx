@@ -1,11 +1,11 @@
 "use client";
 
 import { ArrowLeftIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { randomString } from "@/lib/utils";
 
 import { presetStyles } from "../constants";
 import { QRCodeData, StepProps } from "../types";
@@ -13,7 +13,6 @@ import { CompleteStep } from "./complete-step";
 import { NameStep } from "./name-step";
 import { StyleStep } from "./style-step";
 import { UploadStep } from "./upload-step";
-import Link from "next/link";
 
 // 步骤类型定义
 type Step = {
@@ -28,7 +27,7 @@ export function QRCodeProgress() {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<QRCodeData>({
     name: "",
-    qrShortUrl: randomString(),
+    qrId: "",
     qrFile: null,
     fileKey: "",
     fileName: "",

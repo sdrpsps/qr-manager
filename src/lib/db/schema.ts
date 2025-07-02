@@ -86,3 +86,24 @@ export const userRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
 }));
+
+// ——— 二维码表 ———
+export const qrcodes = sqliteTable("qrcode", {
+  id: text("id").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  attachmentKey: text("attachmentKey"),
+  fileKey: text("fileKey"),
+  styleOptions: text("styleOptions"),
+  isActive: integer("isActive", { mode: "boolean" }).notNull().default(false),
+  isDeleted: integer("isDeleted", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  deletedAt: integer("deletedAt", { mode: "timestamp" }),
+});

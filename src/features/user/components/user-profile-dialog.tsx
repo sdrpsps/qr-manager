@@ -74,7 +74,7 @@ export function UserProfileDialog() {
       const formData = new FormData();
       formData.append("file", avatarFile);
       try {
-        const res = await fetch("/api/upload/avatars", {
+        const res = await fetch("/api/upload/avatar", {
           method: "POST",
           body: formData,
         });

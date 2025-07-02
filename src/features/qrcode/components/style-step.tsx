@@ -33,7 +33,7 @@ import { QRStyling, QRStylingHandle } from "./qr-styling-wrapper";
 export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
   const [options, setOptions] = useState<Options>({
     ...data.styleOptions,
-    data: `${window.location.origin}/s/${data.qrShortUrl}`,
+    data: `${window.location.origin}/s/${data.qrId}`,
   });
   const qrStylingRef = useRef<QRStylingHandle | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);

@@ -1,17 +1,12 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 
 import { FileUploadResponse } from "@/features/upload/types";
 import { auth } from "@/lib/auth";
+import { createStorage } from "@/lib/storage";
 
-const MAX_FILE_SIZE = Number(process.env.MAX_FILE_MB) * 1024 * 1024;
+const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ type: "attachments" | "qrcodes" }> }
-) {
-  const { type: uploadType } = await params;
-
+export async function POST(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: request.headers,
   });
@@ -47,17 +42,8 @@ export async function POST(
       );
     }
 
-    const { env } = await getCloudflareContext({ async: true });
-
-    if (!env.R2) {
-      return NextResponse.json(
-        { message: "Storage service not available" },
-        { status: 500 }
-      );
-    }
-
-    const storage = env.R2;
-    const key = `${uploadType}/${session.user.id}/${Date.now()}-${file.name}`;
+    const storage = await createStorage();
+    const key = `avatars/${session.user.id}`;
 
     await storage.put(key, file, {
       httpMetadata: {

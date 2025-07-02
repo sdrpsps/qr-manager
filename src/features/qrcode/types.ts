@@ -2,7 +2,7 @@ import { Options } from "qr-code-styling";
 
 export interface QRCodeData {
   name: string;
-  qrShortUrl: string;
+  qrId: string;
   qrFile: File | null;
   fileKey: string;
   fileName: string;

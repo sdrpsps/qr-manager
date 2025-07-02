@@ -21,7 +21,7 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
     formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload/qrcodes", {
+      const response = await fetch("/api/upload/qrcode", {
         method: "POST",
         body: formData,
       });
@@ -73,12 +73,12 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
             <CheckCircleIcon className="size-10 text-green-500" />
             <h3 className="text-lg font-semibold">生成完成！</h3>
             <a
-              href={`/api/file/${qrFileKey}`}
+              href={`/file/${qrFileKey}`}
               target="_blank"
               download={`${data.name}.png`}
             >
               <Image
-                src={`/api/file/${qrFileKey}`}
+                src={`/file/${qrFileKey}`}
                 quality={100}
                 alt="二维码"
                 width={300}
