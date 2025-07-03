@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "qrcode",
+	"name": "QRManager",
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2025-03-01",
 	"compatibility_flags": [
@@ -22,14 +22,14 @@
     {
       "binding": "DB",
       "migrations_dir": "drizzle",
-      "database_name": "qrcode-db",
-      "database_id": "413ffc26-715f-4b07-afba-49ca284e8867"
+      "database_name": "qr-manager-db",
+      "database_id": "544c33a8-f15f-4589-830f-33adf27c8f4e"
     }
   ],
 	"r2_buckets": [
 		{
 			"binding": "R2",
-			"bucket_name": "qrcode-storage"
+			"bucket_name": "qr-manager-storage"
 		}
 	]
 }
