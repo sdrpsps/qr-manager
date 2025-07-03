@@ -4,17 +4,18 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { QRCode } from "@/lib/db/schema";
 
-import { StepProps } from "../types";
 import { Loader2Icon } from "lucide-react";
+import { useCreateQRCode } from "../api/use-create-qr-code";
+import { StepProps } from "../types";
 
 type NameStepProps = Omit<StepProps, "onBack">;
 
 export function NameStep({ onNext, data, setData }: NameStepProps) {
   const [isComposing, setIsComposing] = useState(false);
-  const [inputValue, setInputValue] = useState(data.name || "");
-  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState(data.qrName || "");
+
+  const { mutate: createQRCode, isPending } = useCreateQRCode();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -22,7 +23,7 @@ export function NameStep({ onNext, data, setData }: NameStepProps) {
 
     // 只在非合成状态下更新父组件数据
     if (!isComposing) {
-      setData({ ...data, name: value });
+      setData({ ...data, qrName: value });
     }
   };
 
@@ -36,43 +37,24 @@ export function NameStep({ onNext, data, setData }: NameStepProps) {
     setIsComposing(false);
     const value = e.currentTarget.value;
     setInputValue(value);
-    setData({ ...data, name: value });
+    setData({ ...data, qrName: value });
   };
 
   const handleNext = async () => {
-    if (!data.name?.trim()) {
+    if (!data.qrName?.trim()) {
       toast.error("请输入二维码名称");
       return;
     }
 
-    try {
-      setLoading(true);
-      const res = await fetch("/api/qrcode/create", {
-        method: "POST",
-        body: JSON.stringify({ name: data.name }),
-      });
-
-      if (!res.ok) {
-        toast.error("创建二维码失败");
-        return;
+    createQRCode(
+      { json: { name: data.qrName } },
+      {
+        onSuccess: (response) => {
+          setData({ ...data, qrId: response.data.id });
+          onNext();
+        },
       }
-
-      const response = (await res.json()) as {
-        message: string;
-        data: QRCode;
-      };
-
-      setData({
-        ...data,
-        qrId: response.data.id,
-      });
-
-      onNext();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    );
   };
 
   return (
@@ -94,10 +76,10 @@ export function NameStep({ onNext, data, setData }: NameStepProps) {
       </div>
       <Button
         onClick={handleNext}
-        disabled={!data.name?.trim() || loading}
+        disabled={!data.qrName?.trim() || isPending}
         className="w-full"
       >
-        {loading ? <Loader2Icon className="size-4 animate-spin" /> : "下一步"}
+        {isPending ? <Loader2Icon className="size-4 animate-spin" /> : "下一步"}
       </Button>
     </div>
   );

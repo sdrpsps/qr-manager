@@ -8,58 +8,41 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { QRCode } from "@/lib/db/schema";
-import { useDeleteState } from "../hooks/useDeleteState";
+
+import { useGetQRCodes } from "../api/use-get-qr-codes";
+import { useDeleteState } from "../hooks/use-delete-state";
 
 export const QRCodeGrid = () => {
-  const [loading, setLoading] = useState(false);
-  const [qrcodes, setQrcodes] = useState<QRCode[]>([]);
   const [, setDeleteId] = useDeleteState();
 
-  const handleGetQRCodes = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/qrcode/list");
-      const data = (await response.json()) as {
-        message: string;
-        data: QRCode[];
-      };
-      setQrcodes(data.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    handleGetQRCodes();
-  }, []);
+  const { data: qrCodes, isLoading } = useGetQRCodes();
 
   return (
-    <div className="flex flex-col p-6 border-2 border-dashed rounded-lg space-y-4 dark:border-gray-600 dark:bg-gray-800">
-      {loading && (
+    <div className="flex flex-col p-6 border-2 border-dashed rounded-lg dark:border-gray-600 dark:bg-gray-800">
+      {isLoading && (
         <div className="flex justify-center items-center">
-          <Loader className="animate-spin" />
+          <Loader className="size-6 animate-spin" />
         </div>
       )}
-      {qrcodes.length === 0 ? (
-        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-          暂无二维码
-        </p>
+
+      {!isLoading && qrCodes?.data.length === 0 ? (
+        <div className="flex justify-center items-center">
+          <p className="text-center text-gray-500 dark:text-gray-400">
+            暂无二维码
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {qrcodes.map((qr) => (
+          {qrCodes?.data.map((qr) => (
             <div
               key={qr.id}
               className="p-4 border rounded-lg dark:border-gray-600 dark:bg-gray-700"
             >
               <div className="w-full aspect-square bg-gray-100 dark:bg-gray-600 mb-4">
                 <Image
-                  src={`/file/${qr.qrImageKey}`}
+                  src={`/static/${qr.qrImageKey}`}
                   alt={qr.name}
                   width={256}
                   height={256}
@@ -84,7 +67,7 @@ export const QRCodeGrid = () => {
               <div className="flex justify-between mt-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link
-                    href={`/file/${qr.qrImageKey}`}
+                    href={`/static/${qr.qrImageKey}`}
                     target="_blank"
                     download={qr.name}
                   >

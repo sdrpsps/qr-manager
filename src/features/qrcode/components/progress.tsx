@@ -26,9 +26,8 @@ type Step = {
 export function QRCodeProgress() {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<QRCodeData>({
-    name: "",
+    qrName: "",
     qrId: "",
-    qrFile: null,
     qrImageKey: "",
     fileName: "",
     styleOptions: presetStyles.classic.options,
@@ -107,7 +106,7 @@ export function QRCodeProgress() {
               </Link>
             </Button>
             <h2 className="text-2xl font-bold text-center">
-              创建二维码 {data.name ? `- ${data.name}` : ""}
+              创建二维码 {data.qrName ? `- ${data.qrName}` : ""}
             </h2>
           </CardTitle>
 

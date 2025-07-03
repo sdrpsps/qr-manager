@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e1db780c-6c54-4a62-8146-39c3536071d8",
+  "id": "d19dbc29-2327-4329-8b78-b98f3354363b",
   "prevId": "f88bf572-2e7e-43ec-b2f1-016fed625662",
   "tables": {
     "account": {
@@ -123,8 +123,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "qrcode": {
-      "name": "qrcode",
+    "qrCode": {
+      "name": "qrCode",
       "columns": {
         "id": {
           "name": "id",
@@ -147,8 +147,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "attachmentKey": {
-          "name": "attachmentKey",
+        "sourceFileKey": {
+          "name": "sourceFileKey",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -170,14 +170,6 @@
         },
         "isActive": {
           "name": "isActive",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "isDeleted": {
-          "name": "isDeleted",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -210,9 +202,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "qrcode_userId_user_id_fk": {
-          "name": "qrcode_userId_user_id_fk",
-          "tableFrom": "qrcode",
+        "qrCode_userId_user_id_fk": {
+          "name": "qrCode_userId_user_id_fk",
+          "tableFrom": "qrCode",
           "tableTo": "user",
           "columnsFrom": [
             "userId"

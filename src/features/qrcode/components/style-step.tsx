@@ -15,13 +15,14 @@ import {
 } from "lucide-react";
 import type { Options } from "qr-code-styling";
 import { useRef, useState } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { useUpdateQRCodeImageKey } from "../api/use-update-qr-code-image-key";
+import { useUpdateQRCodeStyleOptions } from "../api/use-update-qr-code-style-options";
 import {
   cornerDotStyleMap,
   cornerSquareStyleMap,
@@ -31,15 +32,25 @@ import {
 } from "../constants";
 import { StepProps } from "../types";
 import { QRStyling, QRStylingHandle } from "./qr-styling-wrapper";
+import { useUpload } from "@/features/upload/api/use-upload";
 
 export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
-  const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<Options>({
     ...data.styleOptions,
     data: `${window.location.origin}/s/${data.qrId}`,
   });
+
   const qrStylingRef = useRef<QRStylingHandle | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const {
+    mutate: updateQRCodeStyleOptions,
+    isPending: isUpdatingQRCodeStyleOptions,
+  } = useUpdateQRCodeStyleOptions();
+  const { mutate: uploadQRCodeImage, isPending: isUploadingQRCodeImage } =
+    useUpload();
+  const { mutate: updateQRCodeImageKey, isPending: isUpdatingQRCodeImageKey } =
+    useUpdateQRCodeImageKey();
 
   // 切换预设样式
   const handlePresetChange = (presetName: string) => {
@@ -273,7 +284,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
   // 下载二维码
   const handleDownload = () => {
     if (qrStylingRef.current) {
-      qrStylingRef.current.download({ name: data.name, extension: "png" });
+      qrStylingRef.current.download({ name: data.qrName, extension: "png" });
     }
   };
 
@@ -309,37 +320,49 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
 
   // 下一步
   const handleNext = async () => {
-    setLoading(true);
     const blob = await handleExport();
+    if (!blob) return;
 
-    setData({
-      ...data,
-      styleOptions: options,
-      qrFile: blob
-        ? new File([blob], `${data.name}.png`, { type: "image/png" })
-        : null,
-    });
-
-    try {
-      const res = await fetch("/api/qrcode/update/style", {
-        method: "POST",
-        body: JSON.stringify({
-          qrId: data.qrId,
-          styleOptions: JSON.stringify(options),
-        }),
-      });
-
-      if (!res.ok) {
-        toast.error("更新二维码失败");
-        return;
+    updateQRCodeStyleOptions(
+      {
+        param: { id: data.qrId },
+        json: { styleOptions: JSON.stringify(options) },
+      },
+      {
+        onSuccess: () => {
+          uploadQRCodeImage(
+            {
+              param: { type: "qr-code" },
+              form: {
+                file: new File([blob], `${data.qrName}.png`, {
+                  type: "image/png",
+                }),
+              },
+            },
+            {
+              onSuccess: (response) => {
+                updateQRCodeImageKey(
+                  {
+                    param: { id: data.qrId },
+                    json: { qrImageKey: response.data.key },
+                  },
+                  {
+                    onSuccess: () => {
+                      setData({
+                        ...data,
+                        qrImageKey: response.data.key,
+                        styleOptions: options,
+                      });
+                      onNext();
+                    },
+                  }
+                );
+              },
+            }
+          );
+        },
       }
-
-      onNext();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    );
   };
 
   return (
@@ -919,7 +942,13 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
           上一步
         </Button>
         <Button onClick={handleNext} className="flex-1">
-          {loading ? <Loader2Icon className="size-4 animate-spin" /> : "下一步"}
+          {isUpdatingQRCodeStyleOptions ||
+          isUploadingQRCodeImage ||
+          isUpdatingQRCodeImageKey ? (
+            <Loader2Icon className="size-4 animate-spin" />
+          ) : (
+            "下一步"
+          )}
         </Button>
       </div>
     </div>

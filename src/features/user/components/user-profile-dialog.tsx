@@ -27,16 +27,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { StatusMessage } from "@/features/auth/components/status-message";
-import { FileUploadResponse } from "@/features/upload/types";
 import { authClient } from "@/lib/auth-client";
 
 import { useProfileStates } from "../hooks/useProfileStates";
 import { userProfileSchema } from "../schemas";
 import { UserAvatar } from "./user-avatar";
+import { useUpload } from "@/features/upload/api/use-upload";
 
 export function UserProfileDialog() {
   const [profileState, setProfileState] = useProfileStates();
   const { data: session, isPending, error, refetch } = authClient.useSession();
+  const { mutate: uploadAvatar } = useUpload();
 
   // 本地预览头像URL
   const [imageUrl, setImageUrl] = useState<string | undefined | null>(
@@ -71,20 +72,17 @@ export function UserProfileDialog() {
 
     // 如果有新头像文件，先上传
     if (avatarFile) {
-      const formData = new FormData();
-      formData.append("file", avatarFile);
-      try {
-        const res = await fetch("/api/upload/avatar", {
-          method: "POST",
-          body: formData,
-        });
-        if (!res.ok) throw new Error("上传失败");
-        const data = (await res.json()) as FileUploadResponse;
-        avatarUrl = `${process.env.NEXT_PUBLIC_BUCKET_ADDRESS}/${data.data.key}`;
-      } catch {
-        toast.error("头像上传失败");
-        return;
-      }
+      uploadAvatar(
+        {
+          param: { type: "avatar" },
+          form: { file: avatarFile },
+        },
+        {
+          onSuccess: (data) => {
+            avatarUrl = `${process.env.NEXT_PUBLIC_BUCKET_ADDRESS}/${data.data.key}`;
+          },
+        }
+      );
     }
 
     // 保存昵称和头像

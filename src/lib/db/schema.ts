@@ -90,17 +90,16 @@ export const userRelations = relations(users, ({ many }) => ({
 }));
 
 // ——— 二维码表 ———
-export const qrcodes = sqliteTable("qrcode", {
+export const qrCodes = sqliteTable("qrCode", {
   id: text("id").primaryKey().$defaultFn(() => randomString()),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  attachmentKey: text("attachmentKey"),
+  sourceFileKey: text("sourceFileKey"),
   qrImageKey: text("qrImageKey"),
   styleOptions: text("styleOptions"),
   isActive: integer("isActive", { mode: "boolean" }).notNull().default(false),
-  isDeleted: integer("isDeleted", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
@@ -110,4 +109,4 @@ export const qrcodes = sqliteTable("qrcode", {
   deletedAt: integer("deletedAt", { mode: "timestamp" }),
 });
 
-export type QRCode = typeof qrcodes.$inferSelect;
+export type QRCode = typeof qrCodes.$inferSelect;

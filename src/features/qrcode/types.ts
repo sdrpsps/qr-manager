@@ -1,9 +1,8 @@
 import { Options } from "qr-code-styling";
 
 export interface QRCodeData {
-  name: string;
   qrId: string;
-  qrFile: File | null;
+  qrName: string;
   qrImageKey: string;
   fileName: string;
   styleOptions: Options;
