@@ -1,19 +1,19 @@
 import { headers as getHeaders } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
-import { getQRCode } from "@/features/qrCode/actions/get-qr-code";
-import { recordQrCodeView } from "@/features/qrCode/actions/record-qr-code-view";
+import { getQRCode } from "@/features/qr-code/actions/get-qr-code";
+import { recordQrCodeView } from "@/features/qr-code/actions/record-qr-code-view";
 
-interface ShareKeyProps {
+interface ShareIdProps {
   params: Promise<{
-    key: string;
+    id: string;
   }>;
 }
 
-export default async function ShareKeyPage({ params }: ShareKeyProps) {
-  const { key } = await params;
+export default async function ShareIdPage({ params }: ShareIdProps) {
+  const { id } = await params;
 
-  const qrCode = await getQRCode(key);
+  const qrCode = await getQRCode(id);
   if (
     !qrCode ||
     !qrCode.isActive ||

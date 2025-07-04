@@ -31,7 +31,7 @@ CREATE TABLE `qr_code` (
 	`userId` text NOT NULL,
 	`name` text NOT NULL,
 	`sourceFileKey` text,
-	`qrImageKey` text,
+	`imageKey` text,
 	`styleOptions` text,
 	`isActive` integer DEFAULT false NOT NULL,
 	`createdAt` integer DEFAULT (unixepoch()) NOT NULL,

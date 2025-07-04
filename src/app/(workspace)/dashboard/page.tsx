@@ -2,8 +2,8 @@ import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { DeleteAlertDialog } from "@/features/qrCode/components/delete-alert-dialog";
-import { QRCodeGrid } from "@/features/qrCode/components/qrcode-grid";
+import { DeleteAlertDialog } from "@/features/qr-code/components/delete-alert-dialog";
+import { QRCodeGrid } from "@/features/qr-code/components/qr-code-grid";
 
 export default function DashboardPage() {
   return (

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "983d897a-8d93-474b-9c34-004d0a8fdd07",
+  "id": "401adad7-ee5c-4d13-9804-9a0e5fda4633",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -228,8 +228,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "qrImageKey": {
-          "name": "qrImageKey",
+        "imageKey": {
+          "name": "imageKey",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

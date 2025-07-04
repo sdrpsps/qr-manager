@@ -18,13 +18,14 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
 
   const handleComplete = () => {
     updateQRCodeActive({
-      param: { id: data.qrId },
+      param: { id: data.id },
       json: { isActive: true },
     });
   };
 
   useEffect(() => {
     handleComplete();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -40,12 +41,12 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
             {isUpdatingQRCodeActive ? "启用中..." : "创建完成！"}
           </h3>
           <a
-            href={`/static/${data.qrImageKey}`}
+            href={`/static/${data.imageKey}`}
             target="_blank"
-            download={`${data.qrName}.png`}
+            download={`${data.name}.png`}
           >
             <Image
-              src={`/static/${data.qrImageKey}`}
+              src={`/static/${data.imageKey}`}
               quality={100}
               alt="二维码"
               width={300}
@@ -53,7 +54,7 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
             />
           </a>
           <p className="text-sm text-gray-600">
-            您的二维码 &ldquo;{data.qrName}&rdquo; 已准备就绪，点击图片即可下载
+            您的二维码 &ldquo;{data.name}&rdquo; 已准备就绪，点击图片即可下载
           </p>
         </div>
       </div>

@@ -7,7 +7,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { presetStyles } from "../constants";
 import { QRCodeData, StepProps } from "../types";
 import { CompleteStep } from "./complete-step";
 import { NameStep } from "./name-step";
@@ -22,16 +21,17 @@ type Step = {
   component: React.ComponentType<StepProps>;
 };
 
-// 主进度组件
-export function QRCodeProgress() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [data, setData] = useState<QRCodeData>({
-    qrName: "",
-    qrId: "",
-    qrImageKey: "",
-    fileName: "",
-    styleOptions: presetStyles.classic.options,
-  });
+interface QRCodeUpdateProgressProps {
+  currentData: QRCodeData;
+  step: number;
+}
+
+export function QRCodeUpdateProgress({
+  currentData,
+  step,
+}: QRCodeUpdateProgressProps) {
+  const [currentStep, setCurrentStep] = useState(step);
+  const [data, setData] = useState<QRCodeData>(currentData);
 
   const steps: Step[] = [
     {
@@ -106,7 +106,7 @@ export function QRCodeProgress() {
               </Link>
             </Button>
             <h2 className="text-2xl font-bold text-center">
-              创建二维码 {data.qrName ? `- ${data.qrName}` : ""}
+              编辑二维码 - {data.name}
             </h2>
           </CardTitle>
 

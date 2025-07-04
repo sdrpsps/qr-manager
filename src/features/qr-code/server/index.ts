@@ -49,6 +49,28 @@ const app = new Hono()
     }
   )
   .patch(
+    "/:id/name",
+    sessionMiddleware,
+    zValidator(
+      "json",
+      z.object({
+        name: z.string(),
+      })
+    ),
+    async (c) => {
+      const { id } = c.req.param();
+      const { name } = c.req.valid("json");
+
+      const [qrCode] = await db
+        .update(qrCodes)
+        .set({ name })
+        .where(and(eq(qrCodes.id, id), eq(qrCodes.userId, c.get("user").id)))
+        .returning({ id: qrCodes.id });
+
+      return c.json({ message: "更新名称成功", data: qrCode });
+    }
+  )
+  .patch(
     "/:id/source-file-key",
     sessionMiddleware,
     zValidator(
@@ -98,16 +120,16 @@ const app = new Hono()
     zValidator(
       "json",
       z.object({
-        qrImageKey: z.string(),
+        imageKey: z.string(),
       })
     ),
     async (c) => {
       const { id } = c.req.param();
-      const { qrImageKey } = c.req.valid("json");
+      const { imageKey } = c.req.valid("json");
 
       const [qrCode] = await db
         .update(qrCodes)
-        .set({ qrImageKey })
+        .set({ imageKey })
         .where(and(eq(qrCodes.id, id), eq(qrCodes.userId, c.get("user").id)))
         .returning({ id: qrCodes.id });
 
@@ -136,6 +158,31 @@ const app = new Hono()
       return c.json({ message: "更新启用状态成功", data: qrCode });
     }
   )
+  .post("/:id/duplicate", sessionMiddleware, async (c) => {
+    const { id } = c.req.param();
+
+    const qrCode = await db.query.qrCodes.findFirst({
+      where: and(eq(qrCodes.id, id), eq(qrCodes.userId, c.get("user").id)),
+    });
+
+    if (!qrCode) {
+      return c.json({ message: "二维码不存在" }, 404);
+    }
+
+    const [newQRCode] = await db
+      .insert(qrCodes)
+      .values({
+        userId: c.get("user").id,
+        name: `${qrCode.name} - 副本`,
+        sourceFileKey: qrCode.sourceFileKey,
+        imageKey: qrCode.imageKey,
+        styleOptions: qrCode.styleOptions,
+        isActive: qrCode.isActive,
+      })
+      .returning({ id: qrCodes.id });
+
+    return c.json({ message: "复制成功", data: newQRCode });
+  })
   .delete("/:id", sessionMiddleware, async (c) => {
     const { id } = c.req.param();
 

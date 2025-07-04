@@ -19,6 +19,7 @@ export default async function WorkspaceLayout({
   if (!session) {
     redirect("/sign-in");
   }
+
   return (
     <>
       <Navbar user={session.user} />

@@ -12,11 +12,11 @@ export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
   const { mutate: updateQRCodeSourceFileKey, isPending } =
     useUpdateQRCodeSourceFileKey();
 
-  const onFileUploadSuccess = (sourceFileKey: string, fileName: string) => {
-    setData({ ...data, fileName });
+  const onFileUploadSuccess = (sourceFileKey: string) => {
+    setData({ ...data, sourceFileKey });
 
     updateQRCodeSourceFileKey({
-      param: { id: data.qrId },
+      param: { id: data.id },
       json: { sourceFileKey },
     });
   };
@@ -27,7 +27,7 @@ export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
         上传您想要生成二维码的内容文件
       </div>
       <FileUpload
-        fileName={data.fileName}
+        sourceFileKey={data.sourceFileKey}
         onFileUploadSuccess={onFileUploadSuccess}
       />
       <div className="flex gap-2">
@@ -36,7 +36,7 @@ export function UploadStep({ onNext, onBack, data, setData }: StepProps) {
         </Button>
         <Button
           onClick={onNext}
-          disabled={!data.fileName || isPending}
+          disabled={!data.sourceFileKey || isPending}
           className="flex-1"
         >
           {isPending ? (

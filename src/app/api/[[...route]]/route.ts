@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 
-import qrCodeRoute from "@/features/qrCode/server";
+import qrCodeRoute from "@/features/qr-code/server";
 import uploadRoute from "@/features/upload/server";
 
 const app = new Hono().basePath("/api");

@@ -1,21 +1,25 @@
 "use client";
 
+import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
-import { Loader2Icon } from "lucide-react";
 import { useCreateQRCode } from "../api/use-create-qr-code";
+import { useUpdateQRCodeName } from "../api/use-update-qr-code-name";
 import { StepProps } from "../types";
 
 type NameStepProps = Omit<StepProps, "onBack">;
 
 export function NameStep({ onNext, data, setData }: NameStepProps) {
   const [isComposing, setIsComposing] = useState(false);
-  const [inputValue, setInputValue] = useState(data.qrName || "");
+  const [inputValue, setInputValue] = useState(data.name || "");
 
-  const { mutate: createQRCode, isPending } = useCreateQRCode();
+  const { mutate: createQRCode, isPending: isCreatingQRCode } =
+    useCreateQRCode();
+  const { mutate: updateQRCodeName, isPending: isUpdatingName } =
+    useUpdateQRCodeName();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -23,7 +27,7 @@ export function NameStep({ onNext, data, setData }: NameStepProps) {
 
     // 只在非合成状态下更新父组件数据
     if (!isComposing) {
-      setData({ ...data, qrName: value });
+      setInputValue(value);
     }
   };
 
@@ -37,24 +41,35 @@ export function NameStep({ onNext, data, setData }: NameStepProps) {
     setIsComposing(false);
     const value = e.currentTarget.value;
     setInputValue(value);
-    setData({ ...data, qrName: value });
   };
 
   const handleNext = async () => {
-    if (!data.qrName?.trim()) {
+    if (!inputValue?.trim()) {
       toast.error("请输入二维码名称");
       return;
     }
 
-    createQRCode(
-      { json: { name: data.qrName } },
-      {
-        onSuccess: (response) => {
-          setData({ ...data, qrId: response.data.id });
-          onNext();
-        },
-      }
-    );
+    if (!data.id) {
+      createQRCode(
+        { json: { name: inputValue } },
+        {
+          onSuccess: (response) => {
+            setData({ ...data, id: response.data.id, name: inputValue });
+            onNext();
+          },
+        }
+      );
+    } else {
+      updateQRCodeName(
+        { param: { id: data.id }, json: { name: inputValue } },
+        {
+          onSuccess: () => {
+            setData({ ...data, name: inputValue });
+            onNext();
+          },
+        }
+      );
+    }
   };
 
   return (
@@ -76,10 +91,14 @@ export function NameStep({ onNext, data, setData }: NameStepProps) {
       </div>
       <Button
         onClick={handleNext}
-        disabled={!data.qrName?.trim() || isPending}
+        disabled={!inputValue?.trim() || isCreatingQRCode || isUpdatingName}
         className="w-full"
       >
-        {isPending ? <Loader2Icon className="size-4 animate-spin" /> : "下一步"}
+        {isCreatingQRCode || isUpdatingName ? (
+          <Loader2Icon className="size-4 animate-spin" />
+        ) : (
+          "下一步"
+        )}
       </Button>
     </div>
   );

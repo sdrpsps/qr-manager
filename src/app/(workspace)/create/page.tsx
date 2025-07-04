@@ -1,4 +1,4 @@
-import { QRCodeProgress } from "@/features/qrCode/components/progress";
+import { QRCodeProgress } from "@/features/qr-code/components/qr-code-progress";
 
 export default function CreatePage() {
   return (

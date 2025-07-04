@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { isEqual } from "lodash-es";
 import {
   DownloadIcon,
   EyeIcon,
@@ -20,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUpload } from "@/features/upload/api/use-upload";
 
 import { useUpdateQRCodeImageKey } from "../api/use-update-qr-code-image-key";
 import { useUpdateQRCodeStyleOptions } from "../api/use-update-qr-code-style-options";
@@ -32,12 +34,11 @@ import {
 } from "../constants";
 import { StepProps } from "../types";
 import { QRStyling, QRStylingHandle } from "./qr-styling-wrapper";
-import { useUpload } from "@/features/upload/api/use-upload";
 
 export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
   const [options, setOptions] = useState<Options>({
     ...data.styleOptions,
-    data: `${window.location.origin}/s/${data.qrId}`,
+    data: `${window.location.origin}/s/${data.id}`,
   });
 
   const qrStylingRef = useRef<QRStylingHandle | null>(null);
@@ -284,7 +285,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
   // 下载二维码
   const handleDownload = () => {
     if (qrStylingRef.current) {
-      qrStylingRef.current.download({ name: data.qrName, extension: "png" });
+      qrStylingRef.current.download({ name: data.name, extension: "png" });
     }
   };
 
@@ -320,12 +321,17 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
 
   // 下一步
   const handleNext = async () => {
+    if (isEqual(options, data.styleOptions)) {
+      onNext();
+      return;
+    }
+
     const blob = await handleExport();
     if (!blob) return;
 
     updateQRCodeStyleOptions(
       {
-        param: { id: data.qrId },
+        param: { id: data.id },
         json: { styleOptions: JSON.stringify(options) },
       },
       {
@@ -334,7 +340,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
             {
               param: { type: "qr-code" },
               form: {
-                file: new File([blob], `${data.qrName}.png`, {
+                file: new File([blob], `${data.name}.png`, {
                   type: "image/png",
                 }),
               },
@@ -343,14 +349,14 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
               onSuccess: (response) => {
                 updateQRCodeImageKey(
                   {
-                    param: { id: data.qrId },
-                    json: { qrImageKey: response.data.key },
+                    param: { id: data.id },
+                    json: { imageKey: response.data.key },
                   },
                   {
                     onSuccess: () => {
                       setData({
                         ...data,
-                        qrImageKey: response.data.key,
+                        imageKey: response.data.key,
                         styleOptions: options,
                       });
                       onNext();
@@ -921,7 +927,7 @@ export function StyleStep({ onNext, onBack, data, setData }: StepProps) {
               variant="outline"
               size="sm"
               onClick={handleDownload}
-              disabled={!data.qrImageKey}
+              disabled={!data.imageKey}
             >
               <DownloadIcon className="size-4 mr-2" />
               下载

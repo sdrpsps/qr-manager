@@ -51,7 +51,7 @@ const app = new Hono().post(
       );
     }
 
-    const key = `${c.get("user").id}/${type}/${randomString()}`;
+    const key = `${c.get("user").id}/${type}/${randomString()}.${file.type.split("/")[1]}`;
     const { size } = await uploadFile(file, key);
 
     return c.json({

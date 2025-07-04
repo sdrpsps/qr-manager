@@ -93,7 +93,7 @@ export const qrCodes = sqliteTable("qr_code", {
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   sourceFileKey: text("sourceFileKey"),
-  qrImageKey: text("qrImageKey"),
+  imageKey: text("imageKey"),
   styleOptions: text("styleOptions"),
   isActive: integer("isActive", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("createdAt", { mode: "timestamp" })

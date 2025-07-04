@@ -5,15 +5,19 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { useUpload } from "../api/use-upload";
+import FilePreview from "./file-preview";
 
 interface FileUploadProps {
-  fileName: string;
-  onFileUploadSuccess?: (qrImageKey: string, fileName: string) => void;
+  sourceFileKey: string | null;
+  onFileUploadSuccess?: (sourceFileKey: string) => void;
 }
 
 const MAX_FILE_SIZE = Number(process.env.NEXT_PUBLIC_MAX_FILE_MB) * 1024 * 1024;
 
-export function FileUpload({ fileName, onFileUploadSuccess }: FileUploadProps) {
+export function FileUpload({
+  sourceFileKey,
+  onFileUploadSuccess,
+}: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [dragActive, setDragActive] = useState(false);
@@ -47,7 +51,7 @@ export function FileUpload({ fileName, onFileUploadSuccess }: FileUploadProps) {
       },
       {
         onSuccess: (response) => {
-          onFileUploadSuccess?.(response.data.key, file.name);
+          onFileUploadSuccess?.(response.data.key);
           toast.success("文件上传成功！");
         },
         onError: () => {
@@ -85,20 +89,30 @@ export function FileUpload({ fileName, onFileUploadSuccess }: FileUploadProps) {
         multiple={false}
       />
       <div className="flex flex-col items-center justify-center gap-2">
-        <FileUpIcon className="size-12 text-yellow-400" />
-        <div className="font-medium text-lg mt-2">
-          {isUploading ? (
-            <Loader2Icon className="animate-spin" />
-          ) : (
-            "点击或拖拽上传文件"
-          )}
-        </div>
-        <div className="text-gray-500 text-sm mt-1">
-          支持任意格式，最大 {MAX_FILE_SIZE / 1024 / 1024}MB
-        </div>
-        {fileName && (
-          <div className="text-sm text-blue-500 mt-2">已选择：{fileName}</div>
+        {sourceFileKey ? (
+          <div
+            className="w-full rounded-lg cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FilePreview
+              className="h-[300px] lg:h-[500px] object-contain "
+              src={`/static/${sourceFileKey}`}
+            />
+          </div>
+        ) : (
+          <>
+            {isUploading ? (
+              <Loader2Icon className="size-12 animate-spin" />
+            ) : (
+              <FileUpIcon className="size-12 text-yellow-400" />
+            )}
+          </>
         )}
+
+        <p className="font-medium text-lg mt-2">点击或拖拽上传文件</p>
+        <p className="text-gray-500 text-sm mt-1">
+          支持任意格式，最大 {MAX_FILE_SIZE / 1024 / 1024}MB
+        </p>
       </div>
     </div>
   );

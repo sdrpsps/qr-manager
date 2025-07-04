@@ -1,11 +1,11 @@
 import { Options } from "qr-code-styling";
 
 export interface QRCodeData {
-  qrId: string;
-  qrName: string;
-  qrImageKey: string;
-  fileName: string;
-  styleOptions: Options;
+  id: string;
+  name: string;
+  imageKey: string | null;
+  sourceFileKey: string | null;
+  styleOptions: Options | null;
 }
 
 export interface StepProps {
