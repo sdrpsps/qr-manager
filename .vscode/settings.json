@@ -2,5 +2,11 @@
 	"files.associations": {
 		"wrangler.json": "jsonc",
 		"*.css": "tailwindcss"
+	},
+	"files.exclude": {
+		"**/.idea": true,
+		"**/.next": true,
+		"**/.open-next": true,
+		"**/.wrangler": true,
 	}
 }

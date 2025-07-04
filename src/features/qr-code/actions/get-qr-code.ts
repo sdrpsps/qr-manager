@@ -8,9 +8,11 @@ export const getQRCode = async (id: string) => {
 
   const qrCode = await db.query.qrCodes.findFirst({
     columns: {
-      createdAt: false,
-      updatedAt: false,
-      deletedAt: false,
+      id: true,
+      sourceFileKey: true,
+      imageKey: true,
+      isActive: true,
+      deletedAt: true,
     },
     where: eq(qrCodes.id, id),
   });

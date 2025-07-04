@@ -18,6 +18,7 @@ export default async function ShareIdPage({ params }: ShareIdProps) {
     !qrCode ||
     !qrCode.isActive ||
     !qrCode.sourceFileKey ||
+    !qrCode.imageKey ||
     qrCode.deletedAt
   ) {
     return notFound();

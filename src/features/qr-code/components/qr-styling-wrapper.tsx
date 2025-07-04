@@ -29,6 +29,7 @@ export const QRStyling = forwardRef<
       qrCodeRef.current = new QRCodeStyling(options);
       qrCodeRef.current.append(divRef.current);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // options 变化时 update

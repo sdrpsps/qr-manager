@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
 
 export default function ResetPasswordPage() {
@@ -7,7 +9,9 @@ export default function ResetPasswordPage() {
         <h1 className="text-2xl font-semibold tracking-tight">修改密码</h1>
         <p className="text-sm text-muted-foreground">请填写以下信息修改密码</p>
       </div>
-      <ResetPasswordForm />
+      <Suspense>
+        <ResetPasswordForm />
+      </Suspense>
     </div>
   );
 }
