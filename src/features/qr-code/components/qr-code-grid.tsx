@@ -4,6 +4,7 @@ import {
   CircleAlertIcon,
   CopyIcon,
   DownloadIcon,
+  EyeIcon,
   FilePenLineIcon,
   Loader,
   Trash2Icon,
@@ -12,8 +13,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
@@ -103,6 +104,10 @@ export const QRCodeGrid = () => {
                   </p>
 
                   <div className="flex justify-end items-center space-x-2">
+                    <Badge variant="secondary">
+                      <EyeIcon />
+                      {qr.viewCount}
+                    </Badge>
                     <Label htmlFor="active-mode">启用</Label>
                     <Switch
                       className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"

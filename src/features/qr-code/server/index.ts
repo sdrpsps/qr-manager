@@ -1,27 +1,34 @@
 import { zValidator } from "@hono/zod-validator";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, count, desc, eq, isNull } from "drizzle-orm";
 import { Hono } from "hono";
 import z from "zod";
 
 import { createDb } from "@/lib/db";
-import { qrCodes } from "@/lib/db/schema";
+import { qrCodes, qrCodeViews } from "@/lib/db/schema";
 import { sessionMiddleware } from "@/lib/session-middleware";
 
 const db = await createDb();
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
-    const codes = await db.query.qrCodes.findMany({
-      columns: {
-        styleOptions: false,
-        deletedAt: false,
-      },
-      where: and(
-        eq(qrCodes.userId, c.get("user").id),
-        isNull(qrCodes.deletedAt)
-      ),
-      orderBy: [desc(qrCodes.createdAt)],
-    });
+    const codes = await db
+      .select({
+        id: qrCodes.id,
+        name: qrCodes.name,
+        sourceFileKey: qrCodes.sourceFileKey,
+        imageKey: qrCodes.imageKey,
+        isActive: qrCodes.isActive,
+        viewCount: count(qrCodeViews.id).as("viewCount"),
+        createdAt: qrCodes.createdAt,
+        updatedAt: qrCodes.updatedAt,
+      })
+      .from(qrCodes)
+      .leftJoin(qrCodeViews, eq(qrCodes.id, qrCodeViews.qrCodeId))
+      .where(
+        and(eq(qrCodes.userId, c.get("user").id), isNull(qrCodes.deletedAt))
+      )
+      .groupBy(qrCodes.id)
+      .orderBy(desc(qrCodes.createdAt));
 
     return c.json({ message: "查询二维码列表成功", data: codes });
   })
