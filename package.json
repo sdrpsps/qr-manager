@@ -11,8 +11,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-    "db:migrate-local": "bun src/scripts/migrate.ts local",
-    "db:migrate-remote": "bun src/scripts/migrate.ts remote",
+    "db:migrate-local": "bun scripts/migrate.ts local",
+    "db:migrate-remote": "bun scripts/migrate.ts remote",
     "postinstall": "bun run db:migrate-local"
   },
   "dependencies": {
