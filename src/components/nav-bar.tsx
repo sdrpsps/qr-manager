@@ -12,7 +12,7 @@ export const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="w-full border-b bg-background">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent select-none">
+        <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent select-none animate-gradient">
           <Link href="/" className="flex items-center">
             <Image
               className="mr-2"

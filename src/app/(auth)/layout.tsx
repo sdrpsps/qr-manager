@@ -10,7 +10,7 @@ export default function AuthLayout({
     <div className="min-h-screen flex flex-col lg:grid lg:grid-cols-[38.2%_61.8%]">
       {/* 左侧装饰区域 - 只在大屏幕显示，占 38.2% */}
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex">
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 via-purple-600 to-orange-500" />
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 via-purple-600 to-orange-500 animate-gradient" />
         <div className="relative z-20 flex items-center text-lg font-medium">
           <Link href="/" className="flex items-center">
             <Image
