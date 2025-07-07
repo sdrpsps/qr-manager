@@ -28,9 +28,15 @@
 	],
 	"r2_buckets": [
 		{
-			"binding": "R2",
+			"binding": "NEXT_INC_CACHE_R2_BUCKET",
 			"bucket_name": "qr-manager-storage"
 		}
+	],
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "qr-manager",
+		},
 	],
 	"vars": {},
 	"routes": []
