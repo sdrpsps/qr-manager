@@ -29,8 +29,8 @@ jobs:
 
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
-          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
-          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+          BETTER_AUTH_GITHUB_CLIENT_ID: ${{ secrets.BETTER_AUTH_GITHUB_CLIENT_ID }}
+          BETTER_AUTH_GITHUB_CLIENT_SECRET: ${{ secrets.BETTER_AUTH_GITHUB_CLIENT_SECRET }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           RESEND_SENDER_ADDRESS: ${{ secrets.RESEND_SENDER_ADDRESS }}
 

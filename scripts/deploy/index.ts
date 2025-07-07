@@ -184,8 +184,8 @@ const setupEnvFileAndWranglerConfig = (uuid: string) => {
   const githubActionVars = [
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
-    "GITHUB_CLIENT_ID",
-    "GITHUB_CLIENT_SECRET",
+    "BETTER_AUTH_GITHUB_CLIENT_ID",
+    "BETTER_AUTH_GITHUB_CLIENT_SECRET",
     "RESEND_API_KEY",
     "RESEND_SENDER_ADDRESS",
     "NEXT_PUBLIC_MAX_FILE_MB",
