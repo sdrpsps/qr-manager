@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { getFileUrl } from "@/lib/utils";
 
 import { useUpdateQRCodeActive } from "../api/use-update-qr-code-active";
 import { StepProps } from "../types";
@@ -25,7 +26,7 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
 
   useEffect(() => {
     handleComplete();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -41,13 +42,12 @@ export function CompleteStep({ onBack, data }: CompleteStepProps) {
             {isUpdatingQRCodeActive ? "启用中..." : "创建完成！"}
           </h3>
           <a
-            href={`/static/${data.imageKey}`}
+            href={getFileUrl(data.imageKey)}
             target="_blank"
             download={`${data.name}.png`}
           >
             <Image
-              src={`/static/${data.imageKey}`}
-              quality={100}
+              src={getFileUrl(data.imageKey)}
               alt="二维码"
               width={300}
               height={300}

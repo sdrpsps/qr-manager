@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { getFileUrl } from "@/lib/utils";
 
 import { useDuplicateQRCode } from "../api/use-duplicate-qr-code";
 import { useGetQRCodes } from "../api/use-get-qr-codes";
@@ -84,7 +85,7 @@ export const QRCodeGrid = () => {
                 <div className="w-full aspect-square bg-gray-100 dark:bg-gray-600 mb-4 rounded-lg overflow-hidden">
                   {isAccessible ? (
                     <Image
-                      src={`/static/${qr.imageKey}`}
+                      src={getFileUrl(qr.imageKey)}
                       alt={qr.name}
                       width={256}
                       height={256}
@@ -142,7 +143,7 @@ export const QRCodeGrid = () => {
                   {isAccessible && (
                     <Button size="sm" asChild>
                       <Link
-                        href={`/static/${qr.imageKey}`}
+                        href={getFileUrl(qr.imageKey)}
                         target="_blank"
                         download={qr.name}
                       >

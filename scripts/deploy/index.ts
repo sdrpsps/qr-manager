@@ -78,6 +78,59 @@ const setupBucket = async () => {
   }
 };
 
+const cleanDomain = (url: string): string => {
+  let domain = url;
+
+  // 移除协议部分 (http:// 或 https://)
+  domain = domain.replace(/^https?:\/\//, "");
+
+  // 移除路径部分（从第一个 / 开始的所有内容）
+  domain = domain.split("/")[0];
+
+  // 移除端口号（如果有的话）
+  domain = domain.split(":")[0];
+
+  return domain;
+};
+
+const setupNextConfig = () => {
+  const bucketAddress = process.env.NEXT_PUBLIC_BUCKET_ADDRESS;
+  if (!bucketAddress) return;
+
+  const domain = cleanDomain(bucketAddress);
+
+  const nextConfigPath = resolve("next.config.ts");
+  let nextConfigContent = readFileSync(nextConfigPath, "utf-8");
+
+  // 检查是否已经包含该域名
+  if (!nextConfigContent.includes(`hostname: "${domain}"`)) {
+    // 找到 remotePatterns 数组的位置
+    const remotePatternsMatch = nextConfigContent.match(
+      /remotePatterns:\s*\[([\s\S]*?)\]/
+    );
+
+    if (remotePatternsMatch) {
+      const existingPatterns = remotePatternsMatch[1];
+      const newPattern = `      {
+        protocol: "https",
+        hostname: "${domain}",
+      },`;
+
+      // 在最后一个模式后添加新的模式
+      const updatedPatterns = existingPatterns + newPattern;
+      nextConfigContent = nextConfigContent.replace(
+        /remotePatterns:\s*\[([\s\S]*?)\]/,
+        `remotePatterns: [${updatedPatterns}]`
+      );
+
+      writeFileSync(nextConfigPath, nextConfigContent);
+      console.log(`✅ 已添加 "${domain}" 到 next.config.ts`);
+    } else {
+      console.log("⚠️ 未找到 remotePatterns 配置，跳过 next.config.ts 更新");
+    }
+  }
+};
+
 const setupEnvFileAndWranglerConfig = (uuid: string) => {
   console.log("📄 开始设置环境变量文件和 wrangler 配置...");
 
@@ -187,6 +240,8 @@ const main = async () => {
     const database = await setupDatabase();
     // 检查 R2 存储桶是否存在，不存在则创建
     await setupBucket();
+    // 设置 next.config.ts
+    setupNextConfig();
     // 创建环境变量文件和修改 wrangler.jsonc
     setupEnvFileAndWranglerConfig(database.uuid!);
     // 迁移数据库

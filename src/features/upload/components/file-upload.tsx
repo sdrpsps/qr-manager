@@ -4,6 +4,8 @@ import { FileUpIcon, Loader2Icon } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { getFileUrl } from "@/lib/utils";
+
 import { useUpload } from "../api/use-upload";
 import FilePreview from "./file-preview";
 
@@ -96,7 +98,7 @@ export function FileUpload({
           >
             <FilePreview
               className="h-[300px] lg:h-[500px] object-contain "
-              src={`/static/${sourceFileKey}`}
+              src={getFileUrl(sourceFileKey)}
             />
           </div>
         ) : (
