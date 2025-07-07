@@ -19,17 +19,19 @@
 		"enabled": true
 	},
 	"d1_databases": [
-    {
-      "binding": "DB",
-      "migrations_dir": "drizzle",
-      "database_name": "qr-manager-db",
-      "database_id": "544c33a8-f15f-4589-830f-33adf27c8f4e"
-    }
-  ],
+		{
+			"binding": "DB",
+			"migrations_dir": "drizzle",
+			"database_name": "qr-manager-db",
+			"database_id": "544c33a8-f15f-4589-830f-33adf27c8f4e"
+		}
+	],
 	"r2_buckets": [
 		{
 			"binding": "R2",
 			"bucket_name": "qr-manager-storage"
 		}
-	]
+	],
+	"vars": {},
+	"routes": []
 }

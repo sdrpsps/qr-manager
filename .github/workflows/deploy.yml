@@ -1,0 +1,39 @@
+name: Deploy Worker
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run deploy script
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+          CUSTOM_DOMAIN: ${{ secrets.CUSTOM_DOMAIN }}
+
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_SENDER_ADDRESS: ${{ secrets.RESEND_SENDER_ADDRESS }}
+
+          NEXT_PUBLIC_MAX_FILE_MB: ${{ secrets.NEXT_PUBLIC_MAX_FILE_MB }}
+          NEXT_PUBLIC_BUCKET_ADDRESS: ${{ secrets.NEXT_PUBLIC_BUCKET_ADDRESS }}
+        run: bun run scripts/deploy/index.ts

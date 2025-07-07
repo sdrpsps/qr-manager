@@ -5,17 +5,7 @@ import { promisify } from "util";
 
 import JSONC from "tiny-jsonc";
 
-type MigrateMode = ["local", "remote"];
-
-interface D1Database {
-  binding: string;
-  database_name: string;
-  database_id: string;
-}
-
-interface WranglerConfig {
-  d1_databases: D1Database[];
-}
+import { MigrateMode, WranglerConfig } from "./types";
 
 const execAsync = promisify(exec);
 
@@ -56,7 +46,12 @@ async function migrate() {
 
   // Apply migrations
   console.log(`应用迁移到 ${mode} 数据库: ${dbName}`);
-  await execAsync(`wrangler d1 migrations apply ${dbName} --${mode}`);
+  try {
+    await execAsync(`wrangler d1 migrations apply ${dbName} --${mode}`);
+  } catch (error) {
+    console.error(`应用迁移到 ${mode} 数据库: ${dbName} 失败: ${error}`);
+    process.exit(1);
+  }
 
   console.log("迁移完成！");
 }
