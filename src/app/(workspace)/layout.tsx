@@ -20,6 +20,10 @@ export default async function WorkspaceLayout({
     redirect("/sign-in");
   }
 
+  if (!session.user.emailVerified) {
+    redirect(`/verify?email=${session.user.email}`);
+  }
+
   return (
     <>
       <Navbar user={session.user} />

@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { emailOTP } from "better-auth/plugins";
 
 import {
-  sendResetPasswordEmail,
+  sendForgetPasswordEmail,
   sendSignInEmail,
 } from "@/features/auth/actions/sendEmail";
 
@@ -26,29 +27,35 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
+  plugins: [
+    emailOTP({
+      sendVerificationOnSignUp: true,
+      async sendVerificationOTP({ email, otp, type }) {
+        switch (type) {
+          case "email-verification":
+            await sendSignInEmail({
+              to: email,
+              subject: "验证您的邮箱地址 - QRManager",
+              name: email,
+              otp,
+            });
+            break;
+          case "forget-password":
+            await sendForgetPasswordEmail({
+              to: email,
+              subject: "重置您的密码 - QRManager",
+              name: email,
+              otp,
+            });
+            break;
+          default:
+            break;
+        }
+      },
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
-    sendResetPassword: async ({ user, url }) => {
-      await sendResetPasswordEmail({
-        to: user.email,
-        subject: "修改密码 - QRManager",
-        name: user.name,
-        url,
-      });
-    },
-  },
-  emailVerification: {
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      await sendSignInEmail({
-        to: user.email,
-        subject: "验证您的邮箱地址 - QRManager",
-        name: user.name,
-        url,
-      });
-    },
   },
   socialProviders: {
     github: {

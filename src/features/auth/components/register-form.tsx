@@ -5,6 +5,7 @@ import { GithubIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 
 import { registerFormSchema } from "../schema";
+import { useRouter } from "next/navigation";
 
 type FormStatus = {
   type: StatusType;
@@ -32,6 +34,8 @@ type FormStatus = {
 
 export const RegisterForm = () => {
   const [formStatus, setFormStatus] = useState<FormStatus>({ type: "idle" });
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
@@ -54,25 +58,16 @@ export const RegisterForm = () => {
     await authClient.signUp.email(
       {
         email: values.email,
-        password: values.password,
         name: values.name,
-        callbackURL: "/dashboard",
+        password: values.password,
       },
       {
-        onRequest: () => {
-          setFormStatus({ type: "loading" });
-        },
         onSuccess: () => {
-          setFormStatus({
-            type: "success",
-            message: "请检查你的邮箱，点击链接完成注册",
-          });
+          toast.success("注册成功");
+          router.push("/sign-in");
         },
         onError: (ctx) => {
-          setFormStatus({
-            type: "error",
-            message: ctx.error.message,
-          });
+          setFormStatus({ type: "error", message: ctx.error.message });
         },
       }
     );

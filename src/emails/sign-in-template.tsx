@@ -1,11 +1,9 @@
 import {
   Body,
-  Button,
   Container,
   Head,
   Html,
   Img,
-  Link,
   Preview,
   Section,
   Tailwind,
@@ -14,13 +12,10 @@ import {
 
 interface SignInTemplateProps {
   name: string;
-  verificationUrl: string;
+  otp: string;
 }
 
-const SignInTemplate = ({
-  name,
-  verificationUrl,
-}: SignInTemplateProps) => (
+const SignInTemplate = ({ name, otp }: SignInTemplateProps) => (
   <Tailwind>
     <Html>
       <Head />
@@ -44,30 +39,18 @@ const SignInTemplate = ({
               您好，<strong>{name}</strong>！
             </Text>
             <Text className="mb-4 leading-relaxed">
-              感谢您注册 <strong>QRManager</strong>。为了确保您的账户安全，请点击下面按钮验证您的邮箱。
+              感谢您注册 <strong>QRManager</strong>
+              。为了确保您的账户安全，请使用下方验证码完成邮箱验证。
             </Text>
 
             <Section className="text-center my-6">
-              <Button
-                href={verificationUrl}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-full transition-all"
-              >
-                验证邮箱地址
-              </Button>
+              <Text className="text-2xl font-bold tracking-widest bg-blue-100 text-blue-700 py-3 px-8 rounded-full inline-block">
+                {otp}
+              </Text>
             </Section>
 
-            {/* Fallback Link */}
-            <Text className="text-sm break-all mb-4">
-              如果按钮无法点击，请复制以下链接到浏览器：
-            </Text>
-            <Text className="bg-gray-100 p-3 rounded-md text-xs break-all mb-6">
-              <Link href={verificationUrl} className="text-blue-600 underline">
-                {verificationUrl}
-              </Link>
-            </Text>
-
             <Text className="text-sm text-gray-600">
-              此链接将在 <strong>24 小时</strong>{" "}
+              此验证码将在 <strong>5 分钟</strong>{" "}
               内失效。若非您本人操作，请忽略此邮件。
             </Text>
           </Section>

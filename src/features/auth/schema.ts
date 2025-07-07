@@ -11,8 +11,8 @@ export const loginFormSchema = z.object({
 
 export const registerFormSchema = z
   .object({
-    name: z.string().min(8, {
-      message: "昵称至少8个字符",
+    name: z.string().min(3, {
+      message: "昵称至少3个字符",
     }),
     email: z.string().email({
       message: "邮箱格式不正确",
@@ -46,5 +46,14 @@ export const resetPasswordFormSchema = z
 export const forgotPasswordFormSchema = z.object({
   email: z.string().email({
     message: "邮箱格式不正确",
+  }),
+});
+
+export const verifyEmailFormSchema = z.object({
+  email: z.string().email({
+    message: "邮箱格式不正确",
+  }),
+  otp: z.string().min(6, {
+    message: "验证码至少6个字符",
   }),
 });

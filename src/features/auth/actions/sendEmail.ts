@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-import ResetPasswordTemplate from "@/emails/reset-password-template";
+import ForgetPasswordTemplate from "@/emails/forgot-password-template";
 import SignInTemplate from "@/emails/sign-in-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -9,14 +9,14 @@ interface SendEmailProps {
   to: string;
   subject: string;
   name: string;
-  url: string;
+  otp: string;
 }
 
 export const sendSignInEmail = async ({
   to,
   subject,
   name,
-  url,
+  otp,
 }: SendEmailProps) => {
   const { data, error } = await resend.emails.send({
     from: process.env.RESEND_SENDER_ADDRESS!,
@@ -24,7 +24,7 @@ export const sendSignInEmail = async ({
     subject,
     react: SignInTemplate({
       name,
-      verificationUrl: url,
+      otp,
     }),
   });
 
@@ -35,19 +35,19 @@ export const sendSignInEmail = async ({
   return data;
 };
 
-export const sendResetPasswordEmail = async ({
+export const sendForgetPasswordEmail = async ({
   to,
   subject,
   name,
-  url,
+  otp,
 }: SendEmailProps) => {
   const { data, error } = await resend.emails.send({
     from: process.env.RESEND_SENDER_ADDRESS!,
     to,
     subject,
-    react: ResetPasswordTemplate({
+    react: ForgetPasswordTemplate({
       name,
-      verificationUrl: url,
+      otp,
     }),
   });
 
