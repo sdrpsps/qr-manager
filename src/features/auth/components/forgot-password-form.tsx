@@ -23,7 +23,7 @@ import {
   StatusMessage,
   StatusType,
 } from "@/features/auth/components/status-message";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { forgotPasswordFormSchema } from "../schema";
 
@@ -59,7 +59,10 @@ export const ForgotPasswordForm = () => {
     });
 
     if (error) {
-      setFormStatus({ type: "error", message: error.message });
+      setFormStatus({
+        type: "error",
+        message: getErrorMessage(error.code, "zh-hans"),
+      });
     } else {
       setFormStatus({ type: "success", message: "验证码已发送" });
     }
@@ -75,7 +78,10 @@ export const ForgotPasswordForm = () => {
     });
 
     if (error) {
-      setFormStatus({ type: "error", message: error.message });
+      setFormStatus({
+        type: "error",
+        message: getErrorMessage(error.code, "zh-hans"),
+      });
     } else {
       toast.success("密码重置成功");
       router.push("/sign-in");
@@ -83,10 +89,19 @@ export const ForgotPasswordForm = () => {
   };
 
   const handleGithub = async () => {
-    await authClient.signIn.social({
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.signIn.social({
       provider: "github",
       callbackURL: "/dashboard",
     });
+
+    if (error) {
+      setFormStatus({
+        type: "error",
+        message: getErrorMessage(error.code, "zh-hans"),
+      });
+    }
   };
 
   return (

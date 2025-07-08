@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { loginFormSchema } from "../schema";
 import { StatusMessage, StatusType } from "./status-message";
@@ -42,10 +42,19 @@ export const LoginForm = () => {
   });
 
   const handleGithub = async () => {
-    await authClient.signIn.social({
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.signIn.social({
       provider: "github",
       callbackURL: "/dashboard",
     });
+
+    if (error) {
+      setFormStatus({
+        type: "error",
+        message: getErrorMessage(error.code, "zh-hans"),
+      });
+    }
   };
 
   const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
@@ -57,7 +66,10 @@ export const LoginForm = () => {
     });
 
     if (error) {
-      setFormStatus({ type: "error", message: error.message });
+      setFormStatus({ 
+        type: "error", 
+        message: getErrorMessage(error.code, "zh-hans") 
+      });
     } else {
       toast.success("登录成功");
       router.push("/dashboard");

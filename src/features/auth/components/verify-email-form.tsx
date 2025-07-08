@@ -21,7 +21,7 @@ import {
   StatusMessage,
   StatusType,
 } from "@/features/auth/components/status-message";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { verifyEmailFormSchema } from "../schema";
 
@@ -59,7 +59,10 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
     });
 
     if (error) {
-      setFormStatus({ type: "error", message: error.message });
+      setFormStatus({ 
+        type: "error", 
+        message: getErrorMessage(error.code, "zh-hans") 
+      });
     } else {
       setFormStatus({ type: "success", message: "重新发送验证码成功" });
     }
@@ -74,7 +77,10 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
     });
 
     if (error) {
-      setFormStatus({ type: "error", message: error.message });
+      setFormStatus({ 
+        type: "error", 
+        message: getErrorMessage(error.code, "zh-hans") 
+      });
     } else {
       toast.success("邮箱验证成功");
       router.push("/dashboard");

@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRestPasswordStates } from "@/features/auth/hooks/useRestPasswordStates";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { Button } from "@/components/ui/button";
 import { resetPasswordFormSchema } from "../schema";
@@ -54,7 +54,7 @@ export const ResetPasswordDialog = () => {
     });
 
     if (error) {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error.code, "zh-hans"));
     } else {
       toast.success("密码修改成功");
       setResetPasswordState({ resetPasswordOpen: false });

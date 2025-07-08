@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { useLogoutState } from "../hooks/useLogoutState";
 
@@ -30,7 +30,7 @@ export const LogoutAlertDialog = () => {
     const { error } = await authClient.signOut();
 
     if (error) {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error.code, "zh-hans"));
       setIsLoading(false);
     } else {
       toast.success("退出成功");

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { Navbar } from "@/components/nav-bar";
 import { LogoutAlertDialog } from "@/features/auth/components/logout-alert-dialog";
-import { ResetPasswordDialog } from "@/features/auth/components/reset-password-alert-dialog";
+import { ResetPasswordDialog } from "@/features/auth/components/reset-password-dialog";
 import { UserProfileDialog } from "@/features/user/components/user-profile-dialog";
 import { auth } from "@/lib/auth";
 

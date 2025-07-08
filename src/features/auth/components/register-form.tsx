@@ -22,7 +22,7 @@ import {
   StatusMessage,
   StatusType,
 } from "@/features/auth/components/status-message";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { registerFormSchema } from "../schema";
 import { useRouter } from "next/navigation";
@@ -48,10 +48,19 @@ export const RegisterForm = () => {
   });
 
   const handleGithub = async () => {
-    await authClient.signIn.social({
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.signIn.social({
       provider: "github",
       callbackURL: "/dashboard",
     });
+
+    if (error) {
+      setFormStatus({
+        type: "error",
+        message: getErrorMessage(error.code, "zh-hans"),
+      });
+    }
   };
 
   const onSubmit = async (values: z.infer<typeof registerFormSchema>) => {
@@ -64,7 +73,10 @@ export const RegisterForm = () => {
     });
 
     if (error) {
-      setFormStatus({ type: "error", message: error.message });
+      setFormStatus({ 
+        type: "error", 
+        message: getErrorMessage(error.code, "zh-hans") 
+      });
     } else {
       toast.success("注册成功");
       router.push("/sign-in");
