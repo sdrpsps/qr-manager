@@ -3,6 +3,7 @@
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -15,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { authClient } from "@/lib/auth-client";
+
 import { useLogoutState } from "../hooks/useLogoutState";
 
 export const LogoutAlertDialog = () => {
@@ -24,18 +26,15 @@ export const LogoutAlertDialog = () => {
 
   const handleLogout = async () => {
     setIsLoading(true);
-    try {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            router.push("/sign-in");
-          },
-        },
-      });
-    } catch (error) {
-      console.error("退出登录失败:", error);
-    } finally {
+
+    const { error } = await authClient.signOut();
+
+    if (error) {
+      toast.error(error.message);
       setIsLoading(false);
+    } else {
+      toast.success("退出成功");
+      router.push("/sign-in");
     }
   };
 

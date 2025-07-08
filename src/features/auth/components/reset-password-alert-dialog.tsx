@@ -1,77 +1,137 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import z from "zod";
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { useRestPasswordStates } from "@/features/auth/hooks/useRestPasswordStates";
 import { authClient } from "@/lib/auth-client";
 
-interface ResetPasswordAlertDialogProps {
-  email: string;
-}
+import { Button } from "@/components/ui/button";
+import { resetPasswordFormSchema } from "../schema";
 
-export const ResetPasswordAlertDialog = ({
-  email,
-}: ResetPasswordAlertDialogProps) => {
+export const ResetPasswordDialog = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetPasswordState, setResetPasswordState] = useRestPasswordStates();
 
-  const handleResetPassword = async () => {
-    await authClient.requestPasswordReset(
-      {
-        email,
-        redirectTo: "/reset-password",
-      },
-      {
-        onRequest: () => {
-          setIsLoading(true);
-        },
-        onSuccess: () => {
-          toast.success("密码重置邮件已发送，请检查您的邮箱。");
-        },
-        onError: (error) => {
-          toast.error(error.error.message);
-        },
-      }
-    );
+  const form = useForm<z.infer<typeof resetPasswordFormSchema>>({
+    resolver: zodResolver(resetPasswordFormSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof resetPasswordFormSchema>) => {
+    setIsLoading(true);
+
+    const { error } = await authClient.changePassword({
+      newPassword: values.newPassword,
+      currentPassword: values.currentPassword,
+      revokeOtherSessions: true,
+    });
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("密码修改成功");
+      setResetPasswordState({ resetPasswordOpen: false });
+    }
+
+    setIsLoading(false);
   };
 
   return (
-    <AlertDialog
+    <Dialog
       open={resetPasswordState.resetPasswordOpen}
       onOpenChange={(open) =>
         setResetPasswordState({ resetPasswordOpen: open })
       }
     >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>修改密码</AlertDialogTitle>
-          <AlertDialogDescription>
-            您确定要修改密码吗？这会给您发送一封包含修改密码链接的邮件。
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleResetPassword}
-            disabled={isLoading}
-            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-          >
-            {isLoading ? <Loader2Icon className="size-4 mr-2" /> : "确认"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>修改密码</DialogTitle>
+          <DialogDescription>您确定要修改密码吗？</DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="currentPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>当前密码</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>新密码</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>确认密码</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">取消</Button>
+              </DialogClose>
+              <Button type="submit" variant="destructive" disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2Icon className="size-4 animate-spin" />
+                ) : (
+                  "确认"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };

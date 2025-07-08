@@ -55,22 +55,20 @@ export const RegisterForm = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof registerFormSchema>) => {
-    await authClient.signUp.email(
-      {
-        email: values.email,
-        name: values.name,
-        password: values.password,
-      },
-      {
-        onSuccess: () => {
-          toast.success("注册成功");
-          router.push("/sign-in");
-        },
-        onError: (ctx) => {
-          setFormStatus({ type: "error", message: ctx.error.message });
-        },
-      }
-    );
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.signUp.email({
+      email: values.email,
+      name: values.name,
+      password: values.password,
+    });
+
+    if (error) {
+      setFormStatus({ type: "error", message: error.message });
+    } else {
+      toast.success("注册成功");
+      router.push("/sign-in");
+    }
   };
 
   return (

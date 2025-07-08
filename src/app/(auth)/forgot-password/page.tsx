@@ -6,7 +6,7 @@ export default function ForgotPasswordPage() {
       <div className="flex flex-col space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">忘记密码</h1>
         <p className="text-sm text-muted-foreground">
-          请填写以下信息发送重置密码邮件
+          请填写以下信息以重置密码
         </p>
       </div>
       <ForgotPasswordForm />

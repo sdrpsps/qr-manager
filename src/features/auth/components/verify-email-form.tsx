@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -20,10 +21,9 @@ import {
   StatusMessage,
   StatusType,
 } from "@/features/auth/components/status-message";
-
 import { authClient } from "@/lib/auth-client";
+
 import { verifyEmailFormSchema } from "../schema";
-import { useRouter } from "next/navigation";
 
 interface VerifyEmailFormProps {
   email: string;
@@ -48,38 +48,37 @@ export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
   });
 
   const handleResend = async () => {
-    await authClient.emailOtp.sendVerificationOtp(
-      { email, type: "email-verification" },
-      {
-        onRequest: () => {
-          setFormStatus({ type: "loading" });
-        },
-        onSuccess: () => {
-          setFormStatus({ type: "success", message: "重新发送成功" });
-        },
-        onError: (error) => {
-          setFormStatus({ type: "error", message: error.error.message });
-        },
-      }
-    );
+    const isEmailValid = await form.trigger("email");
+    if (!isEmailValid) return;
+
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
+      email,
+      type: "email-verification",
+    });
+
+    if (error) {
+      setFormStatus({ type: "error", message: error.message });
+    } else {
+      setFormStatus({ type: "success", message: "重新发送验证码成功" });
+    }
   };
 
   const onSubmit = async (data: z.infer<typeof verifyEmailFormSchema>) => {
-    await authClient.emailOtp.verifyEmail(
-      { email, otp: data.otp },
-      {
-        onRequest: () => {
-          setFormStatus({ type: "loading" });
-        },
-        onSuccess: () => {
-          toast.success("邮箱验证成功");
-          router.push("/dashboard");
-        },
-        onError: (error) => {
-          setFormStatus({ type: "error", message: error.error.message });
-        },
-      }
-    );
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.emailOtp.verifyEmail({
+      email,
+      otp: data.otp,
+    });
+
+    if (error) {
+      setFormStatus({ type: "error", message: error.message });
+    } else {
+      toast.success("邮箱验证成功");
+      router.push("/dashboard");
+    }
   };
 
   return (

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -48,27 +49,19 @@ export const LoginForm = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
-    await authClient.signIn.email(
-      {
-        email: values.email,
-        password: values.password,
-        callbackURL: "/dashboard",
-      },
-      {
-        onRequest: () => {
-          setFormStatus({ type: "loading" });
-        },
-        onSuccess: () => {
-          router.push("/dashboard");
-        },
-        onError: (ctx) => {
-          setFormStatus({
-            type: "error",
-            message: ctx.error.message,
-          });
-        },
-      }
-    );
+    setFormStatus({ type: "loading" });
+
+    const { error } = await authClient.signIn.email({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (error) {
+      setFormStatus({ type: "error", message: error.message });
+    } else {
+      toast.success("登录成功");
+      router.push("/dashboard");
+    }
   };
 
   return (
@@ -115,6 +108,7 @@ export const LoginForm = () => {
             </Button>
           </Link>
         </div>
+
         <Button type="submit" className="w-full">
           登录
         </Button>
