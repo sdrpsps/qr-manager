@@ -5,7 +5,7 @@ import z from "zod";
 
 import { createDb } from "@/lib/db";
 import { qrCodes, qrCodeViews } from "@/lib/db/schema";
-import { sessionMiddleware } from "@/lib/session-middleware";
+import { emailVerifiedMiddleware, sessionMiddleware } from "@/lib/middleware";
 
 const db = await createDb();
 
@@ -35,6 +35,7 @@ const app = new Hono()
   .post(
     "/",
     sessionMiddleware,
+    emailVerifiedMiddleware,
     zValidator(
       "json",
       z.object({
@@ -58,6 +59,7 @@ const app = new Hono()
   .patch(
     "/:id/name",
     sessionMiddleware,
+    emailVerifiedMiddleware,
     zValidator(
       "json",
       z.object({
@@ -80,6 +82,7 @@ const app = new Hono()
   .patch(
     "/:id/source-file-key",
     sessionMiddleware,
+    emailVerifiedMiddleware,
     zValidator(
       "json",
       z.object({
@@ -102,6 +105,7 @@ const app = new Hono()
   .patch(
     "/:id/style-options",
     sessionMiddleware,
+    emailVerifiedMiddleware,
     zValidator(
       "json",
       z.object({
@@ -124,6 +128,7 @@ const app = new Hono()
   .patch(
     "/:id/image-key",
     sessionMiddleware,
+    emailVerifiedMiddleware,
     zValidator(
       "json",
       z.object({
@@ -146,6 +151,7 @@ const app = new Hono()
   .patch(
     "/:id/active",
     sessionMiddleware,
+    emailVerifiedMiddleware,
     zValidator(
       "json",
       z.object({
@@ -165,32 +171,37 @@ const app = new Hono()
       return c.json({ message: "更新启用状态成功", data: qrCode });
     }
   )
-  .post("/:id/duplicate", sessionMiddleware, async (c) => {
-    const { id } = c.req.param();
+  .post(
+    "/:id/duplicate",
+    sessionMiddleware,
+    emailVerifiedMiddleware,
+    async (c) => {
+      const { id } = c.req.param();
 
-    const qrCode = await db.query.qrCodes.findFirst({
-      where: and(eq(qrCodes.id, id), eq(qrCodes.userId, c.get("user").id)),
-    });
+      const qrCode = await db.query.qrCodes.findFirst({
+        where: and(eq(qrCodes.id, id), eq(qrCodes.userId, c.get("user").id)),
+      });
 
-    if (!qrCode) {
-      return c.json({ message: "二维码不存在" }, 404);
+      if (!qrCode) {
+        return c.json({ message: "二维码不存在" }, 404);
+      }
+
+      const [newQRCode] = await db
+        .insert(qrCodes)
+        .values({
+          userId: c.get("user").id,
+          name: `${qrCode.name} - 副本`,
+          sourceFileKey: qrCode.sourceFileKey,
+          imageKey: qrCode.imageKey,
+          styleOptions: qrCode.styleOptions,
+          isActive: qrCode.isActive,
+        })
+        .returning({ id: qrCodes.id });
+
+      return c.json({ message: "复制成功", data: newQRCode });
     }
-
-    const [newQRCode] = await db
-      .insert(qrCodes)
-      .values({
-        userId: c.get("user").id,
-        name: `${qrCode.name} - 副本`,
-        sourceFileKey: qrCode.sourceFileKey,
-        imageKey: qrCode.imageKey,
-        styleOptions: qrCode.styleOptions,
-        isActive: qrCode.isActive,
-      })
-      .returning({ id: qrCodes.id });
-
-    return c.json({ message: "复制成功", data: newQRCode });
-  })
-  .delete("/:id", sessionMiddleware, async (c) => {
+  )
+  .delete("/:id", sessionMiddleware, emailVerifiedMiddleware, async (c) => {
     const { id } = c.req.param();
 
     const isExist = await db.query.qrCodes.findFirst({

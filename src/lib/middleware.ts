@@ -26,3 +26,19 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
     await next();
   }
 );
+
+export const emailVerifiedMiddleware = createMiddleware<AdditionalContext>(
+  async (c, next) => {
+    const session = c.get("session");
+
+    if (!session) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    if (!session.user.emailVerified) {
+      return c.json({ error: "Please verify your email" }, 401);
+    }
+
+    await next();
+  }
+);

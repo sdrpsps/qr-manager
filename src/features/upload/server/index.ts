@@ -1,7 +1,7 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 
-import { sessionMiddleware } from "@/lib/session-middleware";
+import { emailVerifiedMiddleware, sessionMiddleware } from "@/lib/middleware";
 import { createStorage } from "@/lib/storage";
 import { randomString } from "@/lib/utils";
 import z from "zod";
@@ -22,6 +22,7 @@ const uploadFile = async (file: File, key: string) => {
 const app = new Hono().post(
   "/:type",
   sessionMiddleware,
+  emailVerifiedMiddleware,
   zValidator(
     "param",
     z.object({

@@ -22,8 +22,8 @@ export default async function UpdateIdPage({ params }: UpdateIdProps) {
 
   if (!qrCode) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-secondary rounded-md p-4 shadow-md flex flex-col items-center justify-center gap-4">
+      <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4 p-4">
           <TriangleAlertIcon className="size-10 text-destructive" />
           <h1 className="text-2xl font-bold">二维码不存在</h1>
           <p className="text-sm text-muted-foreground">

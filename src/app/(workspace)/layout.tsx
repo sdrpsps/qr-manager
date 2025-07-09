@@ -30,7 +30,7 @@ export default async function WorkspaceLayout({
       <UserProfileDialog />
       <ResetPasswordDialog />
       <LogoutAlertDialog />
-      <main className="flex-1">{children}</main>
+      <main className="flex flex-1">{children}</main>
     </>
   );
 }
