@@ -11,8 +11,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-    "db:migrate-local": "bun scripts/migrate.ts local",
-    "db:migrate-remote": "bun scripts/migrate.ts remote"
+    "db:migrate-local": "tsx scripts/migrate.ts local",
+    "db:migrate-remote": "tsx scripts/migrate.ts remote"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.0",
@@ -87,6 +87,7 @@
     "react-email": "^4.0.17",
     "tailwindcss": "^4",
     "tiny-jsonc": "^1.0.2",
+    "tsx": "^4.19.2",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5",
     "wrangler": "^4.22.0"
