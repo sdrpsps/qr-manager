@@ -27,12 +27,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { StatusMessage } from "@/features/auth/components/status-message";
+import { useUpload } from "@/features/upload/api/use-upload";
 import { authClient } from "@/lib/auth-client";
 
 import { useProfileStates } from "../hooks/useProfileStates";
 import { userProfileSchema } from "../schemas";
 import { UserAvatar } from "./user-avatar";
-import { useUpload } from "@/features/upload/api/use-upload";
 
 export function UserProfileDialog() {
   const [profileState, setProfileState] = useProfileStates();

@@ -29,23 +29,6 @@ export const registerFormSchema = z
     path: ["confirmPassword"],
   });
 
-export const resetPasswordFormSchema = z
-  .object({
-    newPassword: z.string().min(8, {
-      message: "新密码至少8个字符",
-    }),
-    currentPassword: z.string().min(8, {
-      message: "当前密码至少8个字符",
-    }),
-    confirmPassword: z.string().min(8, {
-      message: "确认密码至少8个字符",
-    }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "密码不一致",
-    path: ["confirmPassword"],
-  });
-
 export const forgotPasswordFormSchema = z
   .object({
     email: z.string().email({
