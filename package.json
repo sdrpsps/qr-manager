@@ -84,6 +84,7 @@
     "drizzle-kit": "^0.31.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "prettier": "^3.7.4",
     "react-email": "^4.0.17",
     "tailwindcss": "^4",
     "tiny-jsonc": "^1.0.2",

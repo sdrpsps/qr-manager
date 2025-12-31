@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
-  }
+  },
+  allowedDevOrigins: ["*.code.bytespark.me"],
 };
 
 export default nextConfig;

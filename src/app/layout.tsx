@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 
+import GitHubLink from "@/components/github-tooltip-link";
 import QueryProvider from "@/components/query-provider";
 
 import "./globals.css";
@@ -42,6 +43,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
+        <GitHubLink
+          href="https://github.com/sdrpsps/qr-manager"
+          className="fixed bottom-8 right-8 z-50 shadow-lg"
+        />
         <NuqsAdapter>
           <QueryProvider>
             {children}

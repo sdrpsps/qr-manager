@@ -28,8 +28,8 @@ export default function Home() {
             </div>
 
             {/* Main Title */}
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-gray-100 leading-tight">
-              QRManager
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              <span className="gradient-text">QRManager</span>
               <span className="block text-blue-600 dark:text-blue-400">
                 简单易用的动态二维码
               </span>
