@@ -1,6 +1,10 @@
 # QRManager - 动态二维码管理平台
 
 [![Deploy](https://github.com/sdrpsps/qr-manager/actions/workflows/deploy.yml/badge.svg)](https://github.com/sdrpsps/qr-manager/actions/workflows/deploy.yml)
+[![version](https://img.shields.io/github/v/tag/sdrpsps/qr-manager)](https://github.com/sdrpsps/qr-manager/tags)
+[![last commit](https://img.shields.io/github/last-commit/sdrpsps/qr-manager)](
+  https://github.com/sdrpsps/qr-manager/commits/main
+)
 
 > 码不变，内容随时变。一个二维码，无限可能。
 
