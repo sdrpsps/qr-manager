@@ -12,13 +12,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: oven-sh/setup-bun@v2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Install dependencies
-        run: bun install
-
-      - name: Install Dependencies
-        run: bun install
+        run: pnpm install
 
       - name: Run deploy script
         env:
@@ -36,4 +35,4 @@ jobs:
 
           NEXT_PUBLIC_MAX_FILE_MB: ${{ secrets.NEXT_PUBLIC_MAX_FILE_MB }}
           NEXT_PUBLIC_BUCKET_ADDRESS: ${{ secrets.NEXT_PUBLIC_BUCKET_ADDRESS }}
-        run: bun run scripts/deploy/index.ts
+        run: pnpm tsx scripts/deploy/index.ts
