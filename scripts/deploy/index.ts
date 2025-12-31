@@ -214,7 +214,7 @@ const setupEnvFileAndWranglerConfig = (uuid: string) => {
 const migrateDatabase = () => {
   console.log("🔄 开始迁移数据库...");
   try {
-    execSync("bun run db:migrate-remote", { stdio: "inherit" });
+    execSync("pnpm run db:migrate-remote", { stdio: "inherit" });
     console.log("✅ 数据库迁移成功");
   } catch (error) {
     throw new Error(`迁移数据库失败: ${error}`);
@@ -224,7 +224,7 @@ const migrateDatabase = () => {
 const setupWorker = async () => {
   console.log("🔄 部署 Worker 到 Cloudflare...");
   try {
-    execSync("bun run deploy", { stdio: "inherit" });
+    execSync("pnpm run deploy", { stdio: "inherit" });
     console.log("✅ 部署 Worker 到 Cloudflare 成功");
   } catch (error) {
     throw new Error(`部署 Worker 到 Cloudflare 失败: ${error}`);
