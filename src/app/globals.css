@@ -121,49 +121,38 @@
   }
 }
 
+/* 渐变动画关键帧 */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 渐变样式类 */
+.gradient-text {
+  background: linear-gradient(90deg, rgb(234 179 8), rgb(147 51 234), rgb(249 115 22));
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, rgb(234 179 8), rgb(147 51 234), rgb(249 115 22));
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
 @layer utilities {
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    25% {
-      background-position: 50% 25%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    75% {
-      background-position: 50% 75%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
   .animate-gradient {
-    background-size: 300% 300%;
-    animation: gradient 8s ease infinite;
-  }
-
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
-  /* 通用渐变样式 */
-  .gradient-text,
-  .gradient-bg-warm {
-    background-size: 300% 300%;
-    animation: gradient 8s ease infinite;
-  }
-
-  .gradient-text {
-    background: linear-gradient(to right, rgb(234 179 8), rgb(147 51 234), rgb(249 115 22));
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-  }
-
-  .gradient-bg-warm {
-    background: linear-gradient(to bottom right, rgb(234 179 8), rgb(147 51 234), rgb(249 115 22));
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
   }
 }

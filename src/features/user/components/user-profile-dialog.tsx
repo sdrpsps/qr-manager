@@ -41,7 +41,7 @@ export function UserProfileDialog() {
 
   // 本地预览头像URL
   const [imageUrl, setImageUrl] = useState<string | undefined | null>(
-    session?.user.image ?? null
+    session?.user.image ?? null,
   );
   // 新选择的头像文件
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -81,7 +81,7 @@ export function UserProfileDialog() {
           onSuccess: (data) => {
             avatarUrl = `${process.env.NEXT_PUBLIC_BUCKET_ADDRESS}/${data.data.key}`;
           },
-        }
+        },
       );
     }
 
@@ -101,7 +101,7 @@ export function UserProfileDialog() {
 
   const getAccounts = async () => {
     const { data: accounts } = await authClient.listAccounts();
-    setAccounts(accounts?.map((account) => account.provider) ?? []);
+    setAccounts(accounts?.map((account) => account.providerId) ?? []);
   };
 
   const handleLinkGithub = async () => {

@@ -12,18 +12,16 @@ export const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="w-full border-b bg-background">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-2xl font-bold gradient-text select-none">
-          <Link href="/" className="flex items-center">
-            <Image
-              className="mr-2"
-              src="https://image.dooo.ng/c/2025/06/30/6861f48915974.webp"
-              alt="QRManager"
-              width={30}
-              height={30}
-            />
-            QRManager
-          </Link>
-        </div>
+        <Link href="/" className="flex items-center text-2xl font-bold select-none">
+          <Image
+            className="mr-2"
+            src="https://image.dooo.ng/c/2025/06/30/6861f48915974.webp"
+            alt="QRManager"
+            width={30}
+            height={30}
+          />
+          <span className="gradient-text">QRManager</span>
+        </Link>
         <UserMenu user={user} />
       </div>
     </nav>
