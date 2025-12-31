@@ -42,7 +42,7 @@ QRManager 是一个基于 Cloudflare 构建的免费且高可用的动态二维�
 
 ### 前置要求
 - Node.js 20+
-- Bun 包管理器
+- pnpm 包管理器
 - Cloudflare 账户
 
 ### 安装依赖
@@ -52,7 +52,7 @@ git clone https://github.com/your-username/qr-manager.git
 cd qr-manager
 
 # 安装依赖
-bun install
+pnpm install
 ```
 
 ### 环境配置
@@ -66,19 +66,19 @@ cp .env.example .env.local
 ### 本地开发
 ```bash
 # 启动开发服务器
-bun run dev
+pnpm run dev
 
 # 运行数据库迁移
-bun run migrate
+pnpm run db:migrate-local
 ```
 
 ### 构建部署
 ```bash
 # 构建项目
-bun run build
+pnpm run build
 
 # 部署到 Cloudflare
-bun run deploy
+pnpm run deploy
 ```
 
 ## 🏗️ 项目结构
@@ -187,7 +187,7 @@ git push origin v1.0.0
 ### 手动部署
 ```bash
 # 运行部署脚本
-bun run scripts/deploy/index.ts
+pnpm run scripts/deploy/index.ts
 ```
 
 ## 🤝 贡献
