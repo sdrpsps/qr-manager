@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLoading } from "@/hooks/use-loading";
 import { setPasswordSchema } from "@/features/user/schemas";
 import { authClient, getErrorMessage } from "@/lib/auth-client";
 
@@ -28,8 +29,8 @@ interface SetPasswordFormProps {
 }
 
 export function SetPasswordForm({ userEmail, onSuccess }: SetPasswordFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isSubmitting, { start: startSubmitting, stop: stopSubmitting }] = useLoading();
+  const [isSendingOtp, { start: startSendingOtp, stop: stopSendingOtp }] = useLoading();
   const [otpSent, setOtpSent] = useState(false);
 
   const form = useForm<z.infer<typeof setPasswordSchema>>({
@@ -42,7 +43,7 @@ export function SetPasswordForm({ userEmail, onSuccess }: SetPasswordFormProps) 
   });
 
   const handleSendOTP = async () => {
-    setIsSendingOtp(true);
+    startSendingOtp();
 
     const { error } = await authClient.emailOtp.sendVerificationOtp({
       email: userEmail,
@@ -56,11 +57,11 @@ export function SetPasswordForm({ userEmail, onSuccess }: SetPasswordFormProps) 
       setOtpSent(true);
     }
 
-    setIsSendingOtp(false);
+    stopSendingOtp();
   };
 
   const onSubmit = async (values: z.infer<typeof setPasswordSchema>) => {
-    setIsSubmitting(true);
+    startSubmitting();
 
     const { error } = await authClient.emailOtp.resetPassword({
       email: userEmail,
@@ -77,7 +78,7 @@ export function SetPasswordForm({ userEmail, onSuccess }: SetPasswordFormProps) 
       onSuccess();
     }
 
-    setIsSubmitting(false);
+    stopSubmitting();
   };
 
   return (

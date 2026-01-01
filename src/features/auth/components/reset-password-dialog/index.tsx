@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useLoading } from "@/hooks/use-loading";
 import { useRestPasswordStates } from "@/features/auth/hooks/useRestPasswordStates";
 import { authClient } from "@/lib/auth-client";
 
@@ -19,16 +20,31 @@ import { SetPasswordForm } from "./set-password-form";
 
 type PasswordMode = "set" | "change" | "reset";
 
+const modeConfig: Record<PasswordMode, { title: string; description: string }> = {
+  set: {
+    title: "设置密码",
+    description: "为您的账户设置密码，以便使用邮箱密码登录",
+  },
+  change: {
+    title: "修改密码",
+    description: "修改您的登录密码",
+  },
+  reset: {
+    title: "重置密码",
+    description: "通过邮箱验证码重置您的密码",
+  },
+};
+
 export const ResetPasswordDialog = () => {
   const [resetPasswordState, setResetPasswordState] = useRestPasswordStates();
   const [mode, setMode] = useState<PasswordMode>("change");
-  const [isCheckingAccount, setIsCheckingAccount] = useState(true);
+  const [isCheckingAccount, { start: startCheckingAccount, stop: stopCheckingAccount }] = useLoading(true);
   const { data: session } = authClient.useSession();
 
   // 检测用户是否有凭证账户
   useEffect(() => {
     const checkCredentialAccount = async () => {
-      setIsCheckingAccount(true);
+      startCheckingAccount();
       const { data: accounts } = await authClient.listAccounts();
       const hasCredential = accounts?.some(
         (account) => account.providerId === "credential"
@@ -40,13 +56,13 @@ export const ResetPasswordDialog = () => {
       } else {
         setMode("change");
       }
-      setIsCheckingAccount(false);
+      stopCheckingAccount();
     };
 
     if (resetPasswordState.resetPasswordOpen) {
       checkCredentialAccount();
     }
-  }, [resetPasswordState.resetPasswordOpen]);
+  }, [resetPasswordState.resetPasswordOpen, startCheckingAccount, stopCheckingAccount]);
 
   const handleSuccess = () => {
     setResetPasswordState({ resetPasswordOpen: false });
@@ -69,16 +85,8 @@ export const ResetPasswordDialog = () => {
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {mode === "set" && "设置密码"}
-            {mode === "change" && "修改密码"}
-            {mode === "reset" && "重置密码"}
-          </DialogTitle>
-          <DialogDescription>
-            {mode === "set" && "为您的账户设置密码，以便使用邮箱密码登录"}
-            {mode === "change" && "修改您的登录密码"}
-            {mode === "reset" && "通过邮箱验证码重置您的密码"}
-          </DialogDescription>
+          <DialogTitle>{modeConfig[mode].title}</DialogTitle>
+          <DialogDescription>{modeConfig[mode].description}</DialogDescription>
         </DialogHeader>
 
         {/* 检测账户类型中 */}

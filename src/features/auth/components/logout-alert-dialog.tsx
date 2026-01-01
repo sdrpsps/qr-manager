@@ -2,7 +2,6 @@
 
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -15,23 +14,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useLoading } from "@/hooks/use-loading";
 import { authClient, getErrorMessage } from "@/lib/auth-client";
 
 import { useLogoutState } from "../hooks/useLogoutState";
 
 export const LogoutAlertDialog = () => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, { start, stop }] = useLoading();
   const [logoutOpen, setLogoutOpen] = useLogoutState();
 
   const handleLogout = async () => {
-    setIsLoading(true);
+    start();
 
     const { error } = await authClient.signOut();
 
     if (error) {
       toast.error(getErrorMessage(error.code, "zh-hans"));
-      setIsLoading(false);
+      stop();
     } else {
       toast.success("退出成功");
       router.push("/sign-in");
